@@ -1,4 +1,4 @@
-import { getInfo, getLocationBarberShop } from "../repositories/barberRepositores.js";
+import { getAvailableServices, getAvailableTimes, getInfo, getLocationBarberShop } from "../repositories/barberRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -32,7 +32,7 @@ export class BarberShop{
    async info(req,res){
         try {
             const {id} = req.body;
-            if(!id)messageError(res,401,"dados não foram enviados corretamente");
+            if(!id)return messageError(res,401,"dados não foram enviados corretamente");
 
             const result = await getInfo(id);
 
@@ -48,12 +48,59 @@ export class BarberShop{
 
     }
 
-    availableTimes(req,res){
+    async availableTimes(req,res){
+
+      try {
+
+        const {date,barbershop_id} = req.body;
+        if(!date,!barbershop_id)return messageError(res,401,"dados não foram enviados corretamente");
+
+        const result = await getAvailableTimes(date,barbershop_id);
+
+      
+        if(!result) throw new Error("dados não retornaram positivamente");
+
+        //se o dia escolhido foi domingo
+        if(result === "sunday"){
+          return res.status(401).json({success:false, availableTimes:"não pode ser marcado no domingo"})
+        }
+
+
+        return res.status(200).json({success:true, availableTimes:result});
+
+
+        
+      } catch (error) {
+        console.error("falha ao pegar o dia e retornar os horários disponiveis: ", error);
+        return messageError(res,401,"falha ao pegar o dia e retornar os horários disponiveis")
+      }
 
     }
 
-    availableServices(req,res){
+    async availableServices(req,res){
+      try {
+        const {barbershopId} = req.body;
+        if(!barbershopId)return messageError(res,401,"dados não foram enviados corretamente");
 
+        const result = await getAvailableServices(barbershopId);
+
+        if(!result)return messageError(res,401,"dados de serviços não foram encontrados");
+
+        return res.status(200).json({success:true, services:result});
+        
+      } catch (error) {
+        console.error("Falha ao buscar dados de serviços ofertados: ", error);
+        return messageError(res,401,"falha ao buscar dados referente os serviços ofertados");
+      }
+
+    }
+
+    async getBarbe(req,res){
+      try {
+        
+      } catch (error) {
+        
+      }
     }
 
 }

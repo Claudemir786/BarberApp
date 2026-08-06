@@ -17,7 +17,9 @@ route.get("/api/barber/location", barber.location);
 route.get("/api/barber/info", barber.info);
 route.get("/api/barber/available/times", barber.availableTimes);
 route.get("/api/available/services", barber.availableServices);
-
+route.post("/api/scheduling", user.scheduling);
+route.get("/api/user/appointments", user.userAppointments);
+route.get("/api/user/appointment/history", user.userAppointmentsHistory);
 
 export default route;
 

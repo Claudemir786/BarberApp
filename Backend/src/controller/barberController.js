@@ -1,4 +1,4 @@
-import { getAvailableServices, getAvailableTimes, getInfo, getLocationBarberShop } from "../repositories/barberRepositores.js";
+import { createBusinessHour, getAvailableServices, getAvailableTimes, getInfo, getLocationBarberShop, postCreateBabershop, putCancelAppointment } from "../repositories/barberRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -94,6 +94,75 @@ export class BarberShop{
       }
 
     }
+    async cancelAppointment(req,res){
+      try {
+
+        const {appointment_id} = req.body;
+
+        if(!appointment_id)return messageError(res,401,"dados foram enviados incorretamente");
+
+        const result = await putCancelAppointment(appointment_id);
+
+        if(!result)throw new Error("barberRepositories retornou false, a opreção não foi concluida como deveria");
+
+        return messageSuccess(res,200,"Agendamento cancelado com sucesso");
+
+        
+      } catch (error) {
+        console.error("Falha ao tentar cancelar agendamento: ", error);
+        return messageError(res,401,"Falha ao tentar cancelar agendamento escolhido");
+      }
+    }
+
+    async createUserBarbershop(req,res){
+
+      try {
+
+        const{name,address,city,contact_phone} = req.body;
+        //futuramente será o id do usuário logado
+        const userId = 6;
+        
+        const result = await postCreateBabershop(userId,name,address,city,contact_phone);
+
+        if(!result)throw new Error("Não foi possivel criar usuário proprietario de barbearia");
+
+        return res.status(201).json({success:true, message:"barbearia criada com sucesso", barberShopId:result});
+        
+      } catch (error) {
+        console.error("Falha ao criar usuário dono de barbearia: ",error)
+        return messageError(res,401,"não foi possivel registrar uma nova barbearua")
+        
+      }
+
+    }
+
+    async createOpeningHours(req,res){
+      try {
+
+        const {barberShopId,weekday_open,weekday_close,works_saturday,
+              saturday_open,saturday_close, works_sunday, sunday_open,sunday_close} = req.body;
+
+        if(!barberShopId || !weekday_open || !weekday_close)return messageError(res,401,"dados foram enviados incorretamente");
+          
+
+        const result = await createBusinessHour(barberShopId,weekday_open,weekday_close,works_saturday,
+              saturday_open,saturday_close, works_sunday, sunday_open,sunday_close);
+
+        if(!result)throw new Error("repositories retornou false, criação não foi realizada");
+
+        return messageSuccess(res,201,"Horário de funcionamento criado com sucesso");
+        
+      } catch (error) {
+        console.error("falha ao criar horario de funcionamento da barbearia: ", error);
+        return messageError(res,401,"falha ao cadastrar informações de horario de funcionamento");
+      }
+    }
+
+    async updateBarbershop(req,res){
+
+    }
+
+    
 
     async getBarbe(req,res){
       try {

@@ -20,6 +20,11 @@ route.get("/api/available/services", barber.availableServices);
 route.post("/api/scheduling", user.scheduling);
 route.get("/api/user/appointments", user.userAppointments);
 route.get("/api/user/appointment/history", user.userAppointmentsHistory);
+route.put("/api/cancel/appointment", barber.cancelAppointment);
+route.post("/api/create/user/barbershop", barber.createUserBarbershop);
+route.post("/create/opening/hours", barber.createOpeningHours);
+route.put("/api/update/barbershop", barber.updateBarbershop);
+
 
 export default route;
 

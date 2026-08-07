@@ -1,4 +1,4 @@
-import { getAppointments, postScheduling } from "../repositories/userRepositores.js";
+import { getAppointments, getAppointmentsHistory, postScheduling } from "../repositories/userRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -52,6 +52,7 @@ export class User{
 
     async userAppointments(req,res){
         try {
+           //no futuro será o id do usuário logado 
             const userId = 4;
 
             const result = await getAppointments(userId);
@@ -68,8 +69,23 @@ export class User{
     }
 
     async userAppointmentsHistory(req,res){
+        try {
+            //no futuro será o id do usuário logado 
+            const userId = 3;
+            
+            const result = await getAppointmentsHistory(userId);
+
+            if(!result)throw new Error("a respositores retornou false, histórico não encontrado ou falha ao buscar ps dados");
+
+            return res.status(200).json({success:true, history:result});
+            
+        } catch (error) {
+            console.error("falha ao retornar os históricos de agendamentos antigos do usuário: ", error);
+            return messageError(res,401,"falha ao retornar os históricos de agendamentos antigos do usuário")
+        }
       
     }
+
     
 
 

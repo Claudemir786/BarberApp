@@ -22,9 +22,18 @@ export async function postScheduling(barbershop_id,service_id,barber_id,customer
 export async function getAppointments(customer_id) {
     try {
 
-        const [result] = await POOL.query(`SELECT * FROM appointments WHERE customer_id = ? AND status IN ('confirmed','pending')`,[customer_id]);
+        const [result] = await POOL.query(`SELECT
+                                                a.id,
+                                                a.appointment_date,
+                                                a.appointment_time,
+                                                a.status,
+                                                s.title AS service_name
+                                            FROM appointments a
+                                            JOIN services s ON a.service_id = s.id
+                                            WHERE a.customer_id = ?
+                                            AND a.status IN ('pending', 'confirmed');`,[customer_id]);
         
-        if(!result.length === 0)throw new Error("não foram encontrados dados no banco deste usuário");
+        if(!result.length === 0)throw new Error("não foram encontrados dados no banco referente a este usuário");
         
         return result;
 
@@ -36,6 +45,28 @@ export async function getAppointments(customer_id) {
     
 }
 
-export async function getAppointmentsHistory(){
+export async function getAppointmentsHistory(custumer_id){
+    try {
+
+
+        const [result] = await POOL.query(`SELECT
+                                                a.id,
+                                                a.appointment_date,
+                                                a.appointment_time,
+                                                a.status,
+                                                s.title AS service_name
+                                            FROM appointments a
+                                            JOIN services s ON a.service_id = s.id
+                                            WHERE a.customer_id = ?
+                                            AND a.status = 'completed'`,[custumer_id]);
+        
+        if(result.length === 0)throw new Error("não foram encontrados historico de agendamentos desse usuário");
+        
+        return result;
+        
+    } catch (error) {
+        console.error("Dados não retornaram corretamente do banco de dados: ", error);
+        return false;
+    }
 
 }

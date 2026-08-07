@@ -7,6 +7,7 @@ const POOL = pool;
 export async function getLocationBarberShop(city){
     try {
 
+        //buscar também por estado
         const [result] = await POOL.query(`SELECT * FROM barbershops WHERE city = ?`, [city]);
 
 
@@ -86,7 +87,66 @@ export async function getAvailableServices(barbershop_id){
     
 }
 
-//fa a logica de verificar os horarios marcados e retornar os livres;
+export async function putCancelAppointment(appointment_id){
+
+    try {
+
+        const [result] = await POOL.query(`UPDATE appointments SET status = 'canceled' WHERE id = ? `, [appointment_id]);
+
+        if(result.affectedRows === 0 )throw new Error("o upadate falhou no banco de dados");
+
+        return true;
+        
+    } catch (error) {
+        console.error("falha ao fazer a alteração de status: ", error);
+        return false;
+    }
+}
+
+export async function postCreateBabershop(userId,name,address,city,contact_phone){
+    try {
+        
+        const [result] = await POOL.query(`INSERT INTO barbershops (user_id,name,address,city,contact_phone)
+                                            VALUES(?,?,?,?,?)`, [userId,name,address,city,contact_phone]);
+
+        if(result.affectedRows === 0 )throw new Error("falha no banco ao criar uma nova barbearia");
+        
+        return result.insertId;
+        
+    } catch (error) {
+        console.error("falha ao mudar o status de usuário para dono de barbeiara: ", error);
+        return false;
+    }
+
+}
+
+export async function createBusinessHour(barbershop_id,weekday_open,weekday_close,works_saturday,
+              saturday_open,saturday_close, works_sunday, sunday_open,sunday_close){
+    try {
+
+        const [result] = await POOL.query(`INSERT INTO business_hours(barbershop_id,weekday_open,weekday_close,works_saturday,
+                                           saturday_open,saturday_close, works_sunday, sunday_open,sunday_close)
+                                           VALUES(?,?,?,?,?,?,?,?,?)`, 
+                                           [barbershop_id,weekday_open,weekday_close,works_saturday,
+                                            saturday_open,saturday_close, works_sunday, sunday_open,sunday_close]);
+
+        if(result.affectedRows === 0)throw new Error("Falha no banco ao inserir horario de funcionamento");
+        
+        return true;
+        
+    } catch (error) {
+        console.error("falha ao cadastar horario de funcionamento da barbearia em questão");
+        return false;
+    }
+}
+
+export async function putUpdateBarbershop(){
+
+}
+
+
+
+//faz a logica de verificar os horarios marcados e retornar os livres;
 const  freeTimes = async(date,time,barbershop_id)=>{
     try {
         const weekend = await checkWeekend(date)

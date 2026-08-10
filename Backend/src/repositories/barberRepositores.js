@@ -140,8 +140,90 @@ export async function createBusinessHour(barbershop_id,weekday_open,weekday_clos
     }
 }
 
-export async function putUpdateBarbershop(){
+export async function getInfoBarbershop(id){
+    try {
 
+        const [result] = await POOL.query(`SELECT * FROM barbershops WHERE user_id = ?`, [id]);
+        
+        if(result.length === 0 )throw new Error("não foram retornados dados do banco");
+        
+        return result;
+
+    } catch (error) {
+        console.error("falha ao buscar e retornar dados: ", error);
+        return false;
+    }
+
+}
+
+export async function putUpdateBarbershop(id,name,address,contact_phone,city){
+    try {
+
+        const [result] = await POOL.query(`UPDATE barbershops SET name = ?, address = ?, contact_phone = ?, city = ? WHERE id = ?`,
+                                            [name,address,contact_phone,city,id]);
+        
+        if(result.affectedRows === 0)throw new Error("não foi possivel fazer update no banco de dados");
+        
+        return true;
+        
+    } catch (error) {
+        console.error("falha ao fazer update: ", error);
+        return false;
+    }
+}
+
+export async function putUpdateBusinessHour(barberShopId,weekday_open,weekday_close,works_saturday,
+              saturday_open,saturday_close, works_sunday, sunday_open,sunday_close){
+   try {
+
+    const [result] = await POOL.query(`UPDATE business_hours SET
+                                       weekday_open = ?,weekday_close = ?,works_saturday = ?,saturday_open = ?,
+                                       saturday_close = ?, works_sunday = ?, sunday_open = ?,sunday_close = ?
+                                       WHERE barbershop_id = ?`, 
+                                       [weekday_open,weekday_close,works_saturday,
+                                        saturday_open,saturday_close, works_sunday, sunday_open,sunday_close,barberShopId])
+    
+    if(result.affectedRows === 0 )throw new Error("o updatre no banco não foi concluido com sucesso");
+    
+    return true;
+   } catch (error) {
+    console.error("falha ao fazer update: ", error);
+    return false;
+   }             
+    
+}
+
+export async function readBarber(barbershopId){
+
+    try {
+
+        const [result] = await POOL.query(`SELECT * FROM barbers WHERE barbershop_id = ?`, [barbershopId]);
+
+        if(result.length === 0 )throw new Error("Falha ao buscar dados no banco, não foram encontrados registros");
+
+        return result;
+        
+    } catch (error) {
+        console.error("Falha o ler e retornar dados: ", error);
+        return false;
+    }
+
+}
+
+export async function postCreateBarber(barbershopId,name){
+    try {
+        
+        const [result] = await POOL.query(`INSERT INTO barbers (barbershop_id,name)VALUES(?,?)`, [barbershopId,name]);
+
+        if(result.affectedRows === 0)throw new Error("falha ao kcriar novo barbeiro no banco de dados");
+
+        return true;
+
+    } catch (error) {
+        console.error("falha ao criar um novo barbeiro na base de dados: ", error);
+        return false;
+    }
+    
 }
 
 

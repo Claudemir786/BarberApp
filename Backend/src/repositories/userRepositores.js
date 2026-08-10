@@ -27,11 +27,14 @@ export async function getAppointments(customer_id) {
                                                 a.appointment_date,
                                                 a.appointment_time,
                                                 a.status,
-                                                s.title AS service_name
+                                                s.title AS service_name,
+                                                b.name AS barbershop
                                             FROM appointments a
                                             JOIN services s ON a.service_id = s.id
+                                            JOIN barbershops b ON a.barbershop_id = b.id
                                             WHERE a.customer_id = ?
-                                            AND a.status IN ('pending', 'confirmed');`,[customer_id]);
+                                            AND a.status IN ('pending', 'confirmed')
+                                            ;`,[customer_id]);
         
         if(!result.length === 0)throw new Error("não foram encontrados dados no banco referente a este usuário");
         

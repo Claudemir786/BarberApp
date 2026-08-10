@@ -46,7 +46,7 @@ export class User{
 
         } catch (error) {
             console.error("Erro ao registrar agendamento: ", error);
-            return messageError(res,401,"falha ao registrar novo agendamento");
+            return messageError(res,500,"falha ao registrar novo agendamento");
         }
     }
 
@@ -63,7 +63,7 @@ export class User{
             
         } catch (error) {
             console.error("falha o retornoar os agendamentos do usuário: ",error);
-            return messageError(res,401,"falha o retornoar os agendamentos do usuário")
+            return messageError(res,500,"falha o retornoar os agendamentos do usuário")
         }
 
     }
@@ -81,7 +81,7 @@ export class User{
             
         } catch (error) {
             console.error("falha ao retornar os históricos de agendamentos antigos do usuário: ", error);
-            return messageError(res,401,"falha ao retornar os históricos de agendamentos antigos do usuário")
+            return messageError(res,500,"falha ao retornar os históricos de agendamentos antigos do usuário")
         }
       
     }

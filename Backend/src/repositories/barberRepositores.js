@@ -37,11 +37,13 @@ export async function getInfo(id){
 }
 
 
-export async function getAvailableTimes(date, barbershop_id){
+export async function getAvailableTimes(date, barbershop_id,barber_id){
     try {
         //colocar depois a logica do horario para o barbeiro
 
-        const [result] = await POOL.query(`SELECT appointment_time FROM appointments WHERE appointment_date = ? AND barbershop_id = ?`, [date, barbershop_id]);
+        const [result] = await POOL.query(`SELECT appointment_time FROM appointments 
+                                           WHERE appointment_date = ? AND barbershop_id = ? AND barber_id = ?`,
+                                           [date, barbershop_id,barber_id]);
 
         if(result.length === 0 ){
             console.log("nenhum registro foi encontrado")
@@ -224,6 +226,22 @@ export async function postCreateBarber(barbershopId,name){
         return false;
     }
     
+}
+
+export async function getBarbershopByName(barbershopName) {
+    try {
+
+        const [result] = await POOL.query(`SELECT id,name,address,contact_phone,city
+                                           FROM barbershops WHERE name = ?`, [barbershopName]);
+
+        if(result.length === 0 )throw new Error("o banco não retornou nenhum resultado");
+
+        return result;
+        
+    } catch (error) {
+        console.error("falha ao encontrar barbearia por nome: ", error);
+        return false;
+    }
 }
 
 

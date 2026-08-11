@@ -20,7 +20,7 @@ route.get("/api/barbershop/location", barber.location);
 route.get("/api/barbershop/info/businesshour", barber.infoBusinessHours);
 //retorna os horarios disponiveis no dia selecionado
 route.get("/api/barber/available/times", barber.availableTimes);
-//retorna serviõs disponiveis da barbearia
+//retorna serviços disponiveis da barbearia
 route.get("/api/available/services", barber.availableServices);
 //retorna as informaçoes padrão da barbearia
 route.get("/api/barbershop/info", barber.getBarbershop)
@@ -42,11 +42,20 @@ route.put("/api/update/barbershop", barber.updateBarbershop);
 route.put("/api/update/businessHour", barber.updateBusinessHour);
 //busca os barbeiros cadastrados
 route.get("/api/barber", barber.getBarber);
-
 //faz o cadastro de um novo barbeiro
 route.post("/api/create/barber", barber.createBarber);
 //busca a barbearia por nome
-
+route.get("/api/search/barbershop", barber.searchBarbershop);
+//login
+route.post("/api/login", user.login);
+//criação de usuário
+route.post("/api/create/user", user.create);
+//deleta o usuário 
+route.delete("/api/delete/user", user.delete);
+//altera email do usuário
+route.post("/api/update/email", user.updateEmail);
+//altera a senha do usuário
+route.post("/api/update/password", user.updatePassword);
 
 export default route;
 

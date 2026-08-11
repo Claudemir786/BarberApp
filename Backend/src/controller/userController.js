@@ -1,4 +1,4 @@
-import { getAppointments, getAppointmentsHistory, postScheduling } from "../repositories/userRepositores.js";
+import { createUser, deleteUser, getAppointments, getAppointmentsHistory, loginUser, postScheduling, updateEmailUser, updatePasswordUser } from "../repositories/userRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -6,24 +6,98 @@ import { messageError, messageSuccess } from "../util/message.js";
 
 export class User{
 
-    login(req,res){
+   async login(req,res){
+        try {
+            const{email,password} = req.body;
+
+            if(!email || !password)return messageError(res,401,"daods foram enviados incorretamente");
+
+            const user = await loginUser(email,password);
+
+            if(!user)throw new Error("repositories retornou false, o usário não foi validado");
+
+            return res.status(200).json({success:true, user:user});
+
+            
+        } catch (error) {
+            console.error("Falha ao validar dados de login do usuário: ", error);
+            return messageError(res,400,"não foi possível validar usuário");
+        }
 
     }
 
-    create(req,res){
+   async create(req,res){
+        try {
+            const {name,email,password,phone,city,state} = req.body;
+
+            if(!name || !email || !password || !phone || !city || !state)return messageError(res,401,"dados foram enviados incorretamente")
+            
+            const result = await createUser(name,email,password,phone,city,state);
+            
+            if(!result)throw new Error("Repositories retornou false, o usuário não foi criado na base de dados");
+
+            return messageSuccess(res,201,"usuário criado com sucesso");
+            
+        } catch (error) {
+            console.error("Falha ao criar usuário: ", error);
+            return messageError(res,400,"não foi possível criar um novo usuário");
+        }
 
     }
 
-    delete(req,res){
+   async delete(req,res){
+        try {
 
+            //no futuro o id sera dinamico;
+            const id = 7;
+
+            const result = await deleteUser(id);
+
+            if(!result)throw new Error("repositories retornou false, exclusão não foi efetuada");
+
+            return messageSuccess(res,200,"usuário deletado com sucesso");
+            
+        } catch (error) {
+            console.error("falha ao deletar usuário: ", error);
+            return messageError(res,400,"não foi possivel deletar o usuário da base de dados");
+        }
     }
 
-    updatePassword(req,res){
+    async updatePassword(req,res){
 
-    }
+        try {
+            const {password} = req.body;
+            if(!password)return messageError(res,401,"dados enviados incorretamente");
 
-    updateEmail(req,res){
+            const id = 7;
+
+            const result = await updatePasswordUser(id,password);
+            if(!result)throw new Error("Repositories retornou false, a alteração de senha falhou");
+
+            return messageSuccess(res,200,"senha alterada com sucesso");
         
+        } catch (error) {
+            console.error("Falha ao alterar a senha do usuário: ", error);
+            return messageError(res,400,"não foi possivel alterar a senha")
+        }
+    }
+
+   async updateEmail(req,res){
+        try {
+            const {email} = req.body;
+            if(!email)return messageError(res,401,"dados enviados incorretamente");
+            const id = 7;
+
+            const result = await updateEmailUser(id,email);
+
+            if(!result)throw new Error("Repositories retornou false, a alteração de email falhou");
+
+            return messageSuccess(res,200,"email alterado com sucesso")
+            
+        } catch (error) {
+            console.error("Falha ao alterar o email do usuário: ", error);
+            return messageError(res,400,"não foi possivel alterar email do usuário")
+        }
     }
 
     async scheduling(req,res){

@@ -1,4 +1,4 @@
-import { createBusinessHour, getAvailableServices, getAvailableTimes, getInfo, getInfoBarbershop, getLocationBarberShop, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
+import { createBusinessHour, getAvailableServices, getAvailableTimes, getBarbershopByName, getInfo, getInfoBarbershop, getLocationBarberShop, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -10,12 +10,12 @@ export class BarberShop{
 
         //pega o valor que foi enviado por parametro
         const city = req.query.city;
-        if(!city)return messageError(res,400,"dados não foram enviados corretamente");
+        if(!city)return messageError(res,401,"dados não foram enviados corretamente");
 
         console.log("cidade: ", city);
         const result = await getLocationBarberShop(city);
 
-        if(!result)return messageError(res,401,"não foi possivel retornar dados disponiveis nessa região")
+        if(!result)return messageError(res,400,"não foi possivel retornar dados disponiveis nessa região")
         
         return res.status(200).json({success:true, barberShop:result});    
 
@@ -23,7 +23,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("falha ao retornar dados da cidade selecionada: ", error);
-        return messageError(res,500,"falha ao retornar dados de barbearias na localização selecionada");
+        return messageError(res,400,"falha ao retornar dados de barbearias na localização selecionada");
       }
 
     
@@ -32,7 +32,7 @@ export class BarberShop{
    async infoBusinessHours(req,res){
         try {
             const {id} = req.body;
-            if(!id)return messageError(res,400,"dados não foram enviados corretamente");
+            if(!id)return messageError(res,401,"dados não foram enviados corretamente");
 
             const result = await getInfo(id);
 
@@ -43,7 +43,7 @@ export class BarberShop{
             
         } catch (error) {
             console.error("falha ao retornar os dados de informações: ", error);
-            return messageError(res,500,"não foi possivel retornar informações da barbearia seleicionada")
+            return messageError(res,400,"não foi possivel retornar informações da barbearia seleicionada")
         }
 
     }
@@ -52,11 +52,11 @@ export class BarberShop{
 
       try {
 
-        const {date,barbershop_id} = req.body;
-        if(!date,!barbershop_id)return messageError(res,400,"dados não foram enviados corretamente");
+        const {date,barbershop_id,barber_id} = req.body;
+        console.log(req.body);
+        if(!date || !barbershop_id || !barber_id)return messageError(res,401,"dados não foram enviados corretamente");
 
-        const result = await getAvailableTimes(date,barbershop_id);
-
+        const result = await getAvailableTimes(date,barbershop_id,barber_id);
       
         if(!result) throw new Error("dados não retornaram positivamente");
 
@@ -69,7 +69,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("falha ao pegar o dia e retornar os horários disponiveis: ", error);
-        return messageError(res,500,"falha ao pegar o dia e retornar os horários disponiveis")
+        return messageError(res,400,"falha ao pegar o dia e retornar os horários disponiveis")
       }
 
     }
@@ -77,7 +77,7 @@ export class BarberShop{
     async availableServices(req,res){
       try {
         const {barbershopId} = req.body;
-        if(!barbershopId)return messageError(res,400,"dados não foram enviados corretamente");
+        if(!barbershopId)return messageError(res,401,"dados não foram enviados corretamente");
 
         const result = await getAvailableServices(barbershopId);
 
@@ -87,7 +87,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("Falha ao buscar dados de serviços ofertados: ", error);
-        return messageError(res,500,"falha ao buscar dados referente os serviços ofertados");
+        return messageError(res,400,"falha ao buscar dados referente os serviços ofertados");
       }
 
     }
@@ -96,7 +96,7 @@ export class BarberShop{
 
         const {appointment_id} = req.body;
 
-        if(!appointment_id)return messageError(res,400,"dados foram enviados incorretamente");
+        if(!appointment_id)return messageError(res,401,"dados foram enviados incorretamente");
 
         const result = await putCancelAppointment(appointment_id);
 
@@ -107,7 +107,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("Falha ao tentar cancelar agendamento: ", error);
-        return messageError(res,500,"Falha ao tentar cancelar agendamento escolhido");
+        return messageError(res,400,"Falha ao tentar cancelar agendamento escolhido");
       }
     }
 
@@ -127,7 +127,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("Falha ao criar usuário dono de barbearia: ",error)
-        return messageError(res,500,"não foi possivel registrar uma nova barbearua")
+        return messageError(res,400,"não foi possivel registrar uma nova barbearua")
         
       }
 
@@ -139,7 +139,7 @@ export class BarberShop{
         const {barberShopId,weekday_open,weekday_close,works_saturday,
               saturday_open,saturday_close, works_sunday, sunday_open,sunday_close} = req.body;
 
-        if(!barberShopId || !weekday_open || !weekday_close)return messageError(res,400,"dados foram enviados incorretamente");
+        if(!barberShopId || !weekday_open || !weekday_close)return messageError(res,401,"dados foram enviados incorretamente");
           
 
         const result = await createBusinessHour(barberShopId,weekday_open,weekday_close,works_saturday,
@@ -151,7 +151,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("falha ao criar horario de funcionamento da barbearia: ", error);
-        return messageError(res,500,"falha ao cadastrar informações de horario de funcionamento");
+        return messageError(res,400,"falha ao cadastrar informações de horario de funcionamento");
       }
     }
 
@@ -170,7 +170,7 @@ export class BarberShop{
 
       } catch (error) {
         console.error("falha ao buscar dados: ", error);
-        return messageError(res,500,"não foi possivel retornar dados da barbearia");
+        return messageError(res,400,"não foi possivel retornar dados da barbearia");
       }
     }
 
@@ -180,7 +180,7 @@ export class BarberShop{
 
         const {id,name,address,contact_phone,city} = req.body;
 
-        if(!id,!name,!address,!contact_phone,!city)return messageError(res,400,"os dados foram enviados incorretamente");
+        if(!id,!name,!address,!contact_phone,!city)return messageError(res,401,"os dados foram enviados incorretamente");
 
         const result = await putUpdateBarbershop(id,name,address,contact_phone,city);
 
@@ -191,7 +191,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("falha ao atualizar os dados da barbearia: ", error);
-        return messageError(res,500,"não foi possível alterar os dados da barbearia");
+        return messageError(res,400,"não foi possível alterar os dados da barbearia");
       }
     }
 
@@ -202,7 +202,7 @@ export class BarberShop{
               saturday_open,saturday_close, works_sunday, sunday_open,sunday_close} = req.body;
 
          if(!barberShopId,!weekday_open,!weekday_close){
-              return messageError(res,400,"dados enviados incorretamente");
+              return messageError(res,401,"dados enviados incorretamente");
             }
         
          const result = await putUpdateBusinessHour(barberShopId,weekday_open,weekday_close,works_saturday,
@@ -215,7 +215,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("falha ao realizar a atualização de horario de funcionamento: ", error);
-        return messageError(res,500,"não foi possível realizar a atualização do horário de funcionamento");
+        return messageError(res,400,"não foi possível realizar a atualização do horário de funcionamento");
         
       }
     }
@@ -226,7 +226,7 @@ export class BarberShop{
 
         const {barbershopId} = req.body;
 
-        if(!barbershopId)return messageError(res,400,"dados enviados incorretamente");
+        if(!barbershopId)return messageError(res,401,"dados enviados incorretamente");
 
         const result = await readBarber(barbershopId);
 
@@ -236,7 +236,7 @@ export class BarberShop{
         
       } catch (error) {
         console.error("Falha ao retornar dados: ", error);
-        return messageError(res,500,"não foi possível retornar os dados");
+        return messageError(res,400,"não foi possível retornar os dados");
       }
     }
 
@@ -246,19 +246,39 @@ export class BarberShop{
 
         const {barbershopId,name} = req.body;
 
-        if(!barbershopId || !name)messageError(res,400,"dados não foram enviados corretamente");
+        if(!barbershopId || !name)messageError(res,401,"dados não foram enviados corretamente");
 
         const result  = await postCreateBarber(barbershopId,name);
 
         if(!result)throw new Error("Repositores retornou false, não foi possivel criar novo usuário");
 
-        return res.status(201).json({success:true, message:"barbeiro cirado com sucesso"})
+        return res.status(201).json({success:true, message:"barbeiro criado com sucesso"})
         
       } catch (error) {
         console.error("Falha ao cadastrar novo barbeiro: ", error);
-        return messageError(res,500,"não foi possível criar um novo barbeiro");
+        return messageError(res,400,"não foi possível criar um novo barbeiro");
       
       } 
+    }
+
+
+    async searchBarbershop(req,res){
+      try {
+
+        const barbershopName = req.query.name;
+
+        console.log("nome recebido: ", barbershopName);
+
+        const barbershop = await getBarbershopByName(barbershopName);
+
+        if(!barbershop)throw new Error("repositories retornou false, não foram encontrados dados");
+
+        return res.status(200).json({success:true, barbershop:barbershop});
+        
+      } catch (error) {
+        console.error("falha ao encontrar barbearia: ", error);
+        return messageError(res,400,"Não foi possivel retornar dados de busca de barbearia");
+      }
     }
 
 }

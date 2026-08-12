@@ -117,7 +117,7 @@ export class BarberShop{
 
         const{name,address,city,contact_phone} = req.body;
         //futuramente será o id do usuário logado
-        const userId = 6;
+        const userId = req.user.id;
         
         const result = await postCreateBabershop(userId,name,address,city,contact_phone);
 
@@ -160,7 +160,7 @@ export class BarberShop{
       try {
         
         //futuramente será o id do usuário
-        const id = 1;
+        const id = req.user.id;
 
         const result = await getInfoBarbershop(id);
 

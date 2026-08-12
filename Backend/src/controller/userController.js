@@ -49,7 +49,7 @@ export class User{
         try {
 
             //no futuro o id sera dinamico;
-            const id = 7;
+            const id = req.user.id;
 
             const result = await deleteUser(id);
 
@@ -69,7 +69,7 @@ export class User{
             const {password} = req.body;
             if(!password)return messageError(res,401,"dados enviados incorretamente");
 
-            const id = 7;
+            const id = req.user.id;
 
             const result = await updatePasswordUser(id,password);
             if(!result)throw new Error("Repositories retornou false, a alteração de senha falhou");
@@ -86,7 +86,7 @@ export class User{
         try {
             const {email} = req.body;
             if(!email)return messageError(res,401,"dados enviados incorretamente");
-            const id = 7;
+            const id = req.user.id;
 
             const result = await updateEmailUser(id,email);
 
@@ -110,7 +110,7 @@ export class User{
             }
             
             //pega o id do usuário
-            const userId = 1;
+            const userId = req.user.id;
 
             const result = await postScheduling(barbershop_id,service_id,barber_id,userId,appointment_date,appointment_time)
 
@@ -127,7 +127,7 @@ export class User{
     async userAppointments(req,res){
         try {
            //no futuro será o id do usuário logado 
-            const userId = 4;
+            const userId = req.user.id;
 
             const result = await getAppointments(userId);
 
@@ -145,7 +145,7 @@ export class User{
     async userAppointmentsHistory(req,res){
         try {
             //no futuro será o id do usuário logado 
-            const userId = 3;
+            const userId = req.user.id;
             
             const result = await getAppointmentsHistory(userId);
 

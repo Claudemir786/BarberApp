@@ -1,5 +1,6 @@
 import pool from "../db/db.js"
 import { comparePassword, hashPassword } from "../util/bcrypt.js";
+import { createToken } from "../util/token.js";
 
 const POOL =pool;
 
@@ -33,7 +34,10 @@ try {
     const verificPassword = await comparePassword(password,user.password);
     if(!verificPassword)throw new Error("as senha não são iguais ");
 
-    return result;
+    const token = createToken(user);
+    if(!token)throw new Error("O token não foi criado corretamente");
+
+    return {token:token,name:user.name,email:user.email};
 
 } catch (error) {
     console.error("falha ao verificar se o usuário existe na base de dados: ", error);
@@ -65,11 +69,13 @@ export async function getAppointments(customer_id) {
                                                 a.appointment_date,
                                                 a.appointment_time,
                                                 a.status,
+                                                c.name AS barber,
                                                 s.title AS service_name,
                                                 b.name AS barbershop
                                             FROM appointments a
                                             JOIN services s ON a.service_id = s.id
                                             JOIN barbershops b ON a.barbershop_id = b.id
+                                            JOIN barbers c ON a.barber_id = c.id 
                                             WHERE a.customer_id = ?
                                             AND a.status IN ('pending', 'confirmed')
                                             ;`,[customer_id]);

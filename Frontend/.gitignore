@@ -5,6 +5,7 @@ node_modules/
 android/
 ios/
 package-lock.json
+cores.js
 
 # Expo
 .expo/

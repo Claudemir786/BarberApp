@@ -22,7 +22,7 @@ export default function InputDefault({label="default",placeholder,password,value
 
 const styles = StyleSheet.create({
   view:{
-    width:'90%',
+    width:'100%',
     alignSelf:'center',
     marginBottom:'10%'
   },

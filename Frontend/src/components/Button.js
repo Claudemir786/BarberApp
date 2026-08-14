@@ -23,7 +23,7 @@ export default function ButtonDefault({title="Enviar",color="#D4AF37", textColor
 
 const styles = StyleSheet.create({
     view:{
-        width:'90%',
+        width:'100%',
         alignSelf:'center'
     },
     text:{

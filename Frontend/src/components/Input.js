@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 
-export default function InputDefault({label="default",placeholder,password,value,onChange}){
+export default function InputDefault({label="",placeholder,password,value,onChange}){
 
     return(
         <View style={styles.view}>

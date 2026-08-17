@@ -24,7 +24,7 @@ export default function login({navigation}){
                     {/*Inputs */}
                     <InputDefault label='Email'/>
                     <InputDefault label='Senha' password={true}/>
-                    <ButtonDefault title='Entrar' textColor='#000'/>
+                    <ButtonDefault title='Entrar' textColor='#000' onpress={()=>navigation.navigate("Tab")}/>
 
                     <View style={{flexDirection:'row',justifyContent:'center', marginTop:"10%"}}>
                         <Text style={styles.textLogin}>Não tem uma conta?</Text>

@@ -4,6 +4,7 @@ import index from "../pages/Index.js";
 import login from "../pages/Login.js";
 import Register from "../pages/Register";
 import  Tabs  from "./tabs.js";
+import Barbershop from "../pages/barbershop.js";
 
 const STACK = createNativeStackNavigator();
 
@@ -19,6 +20,7 @@ export default function Stack(){
             <STACK.Screen name="Login" component={login}/>
             <STACK.Screen name="Register" component={Register}/>
             <STACK.Screen name="Tab" component={Tabs}/>
+            <STACK.Screen name="Barbershop" component={Barbershop}/>
 
        </STACK.Navigator>
     )

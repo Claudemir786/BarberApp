@@ -99,7 +99,7 @@ export default function Profile({navigation}){
 
             </View>
 
-            <View style={{width:'90%', alignSelf:'center', marginTop:'5%'}}>
+            <View style={{width:'90%', alignSelf:'center', marginTop:'5%', marginBottom:'10%'}}>
                 <ButtonDefault title="Sair" color="#000" borderColor="#D4AF37" textColor="#D4AF37"/>
             </View>
 

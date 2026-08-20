@@ -73,7 +73,9 @@ export default function Home({navigation}){
                 
                 {/*cards de barbearias */}
                 <View style={styles.cardBarbershop}>
-                    <View style={{width:'90%', alignSelf:'center',marginTop:'5%',marginBottom:'5%'}}>
+                    <TouchableOpacity style={{width:'90%', alignSelf:'center',marginTop:'5%',marginBottom:'5%'}}
+                        onPress={()=> navigation.navigate("Barbershop")}
+                    >
                         {/*Nome da barbearia*/}
                         <Text style={[styles.titleCard,{marginBottom:'1%'}]}>
                             Barbearia Dom Pedro
@@ -85,7 +87,7 @@ export default function Home({navigation}){
                         </View>
                             <Text style={[styles.titleCard,{textAlign:'right'}]}>R$ 35</Text>
                     
-                    </View>                                        
+                    </TouchableOpacity>                                        
                 </View>
 
                 <View style={styles.cardBarbershop}>

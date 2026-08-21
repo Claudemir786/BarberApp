@@ -141,7 +141,9 @@ export default function Home({navigation}){
                         padding:10
                         }
                         
-                        }>
+                        }
+                        onPress={()=>navigation.navigate("RegisterBarbershop")}
+                        >
                         <Text style={{textAlign:'center',color:'#fff',fontSize:15,fontWeight:'500'}}>Cadastrar</Text>
                     </TouchableOpacity>
                     

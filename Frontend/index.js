@@ -7,6 +7,7 @@ import Login from './src/pages/Login.js';
 import Home from './src/pages/Home.js';
 import Appointments from './src/pages/Appointments.js';
 import Barbershop from './src/pages/barbershop.js';
+import RegisterBarbershop from './src/pages/RegisterBarbershop.js';
 
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);

@@ -17,7 +17,7 @@ route.get("/api/test", (req,res)=>{
 
 //barbearias da região
 route.get("/api/barbershop/location", authHeader, barber.location);
-//retorna ias e horarios de funcionamento
+//retorna dias e horarios de funcionamento
 route.get("/api/barbershop/info/businesshour", authHeader, barber.infoBusinessHours);
 //retorna os horarios disponiveis no dia selecionado
 route.get("/api/barber/available/times", authHeader, barber.availableTimes);

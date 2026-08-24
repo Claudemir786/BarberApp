@@ -37,6 +37,10 @@ try {
     const token = createToken(user);
     if(!token)throw new Error("O token não foi criado corretamente");
 
+
+    //fazer logica de caso o usuário seja dono da barbearia antes de retornar os dados;
+    
+
     return {token:token,name:user.name,email:user.email};
 
 } catch (error) {

@@ -130,7 +130,7 @@ export default function RegisterBarbershop({navigation}){
 
                     </Picker>
                 </View>                                                   
-                <ButtonDefault title='Cadastrar barbearia' textColor='#000'/>                               
+                <ButtonDefault title='Cadastrar barbearia' textColor='#000' onpress={()=> navigation.navigate("BusinessHours")}/>                               
              </View>
         </ScrollView>
     )

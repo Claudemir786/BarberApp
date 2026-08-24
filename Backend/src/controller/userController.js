@@ -144,7 +144,7 @@ export class User{
 
     async userAppointmentsHistory(req,res){
         try {
-            //no futuro será o id do usuário logado 
+           
             const userId = req.user.id;
             
             const result = await getAppointmentsHistory(userId);

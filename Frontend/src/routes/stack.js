@@ -5,8 +5,8 @@ import login from "../pages/Login.js";
 import Register from "../pages/Register";
 import  Tabs  from "./tabs.js";
 import Barbershop from "../pages/barbershop.js";
-import RegisterBarbershop from "../pages/RegisterBarbershop.js";
-import BusinessHours from "../pages/RegisterBusinessHours.js";
+import RegisterBarbershop from "../pages/owner/RegisterBarbershop.js";
+import BusinessHours from "../pages/owner/RegisterBusinessHours.js";
 
 const STACK = createNativeStackNavigator();
 

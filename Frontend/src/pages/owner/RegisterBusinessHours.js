@@ -1,8 +1,9 @@
 import { Text,StyleSheet,ScrollView, View, TextInput, Button } from "react-native";
-import Logo from "../components/Logo";
 import { useState } from "react";
 import DateTimePicker from '@react-native-community/datetimepicker'
-import ButtonDefault from "../components/Button";
+import Logo from "../../components/Logo";
+import ButtonDefault from "../../components/Button";
+
 
 
 export default function BusinessHours({navigation}){

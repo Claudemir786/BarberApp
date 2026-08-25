@@ -278,7 +278,7 @@ export default function Barbershop({navigation}){
                 </View>
             </Modal>
 
-            //passo 4
+            //passo 3
             <Modal visible={stepThree} transparent={true} animationType='fade'>
                 
                 <View style={styles.overlay}>

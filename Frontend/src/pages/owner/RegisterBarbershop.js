@@ -1,10 +1,10 @@
 import {Text,View,StyleSheet, TouchableOpacity,ScrollView, TextInput} from 'react-native'
 import {Picker} from '@react-native-picker/picker'
-import Logo from '../components/Logo'
-import ButtonDefault from '../components/Button'
-import InputDefault from '../components/Input'
 import { useEffect, useState } from 'react'
-import { getCities, getStates } from '../util/connIBGEapi.js'
+import Logo from '../../components/Logo.js';
+import InputDefault from '../../components/Input.js';
+import ButtonDefault from '../../components/Button.js';
+import { getCities, getStates } from '../../util/connIBGEapi.js';
 
 //nome,endereço,numero de contato, cidade 
 

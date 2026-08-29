@@ -9,6 +9,7 @@ import Appointments from './src/pages/Appointments.js';
 import Barbershop from './src/pages/barbershop.js';
 import Dashboard from './src/pages/owner/Dashboard.js';
 import OwnerAppointments from './src/pages/owner/Appointments.js';
+import Barber from './src/pages/owner/Barber.js';
 
 
 
@@ -16,4 +17,4 @@ import OwnerAppointments from './src/pages/owner/Appointments.js';
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in Expo Go or in a native build,
 // the environment is set up appropriately
-registerRootComponent(OwnerAppointments);
+registerRootComponent(Barber);

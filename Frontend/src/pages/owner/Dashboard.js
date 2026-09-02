@@ -4,7 +4,7 @@ import Feather from '@expo/vector-icons/Feather';
 
 
 
-export default function Dashboard(){
+export default function Dashboard({navigation}){
 
     return(
         <View style={styles.container}>

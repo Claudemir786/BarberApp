@@ -2,11 +2,24 @@ import {Text,View,StyleSheet,TouchableOpacity, ScrollView} from 'react-native'
 import Logo from '../components/Logo'
 import InputDefault from '../components/Input'
 import ButtonDefault from '../components/Button'
+import { useState } from 'react'
 
 
 
 export default function login({navigation}){
 
+    const [password,setPassword] = useState("")
+
+    function handleLogin(){
+        console.log("variavel senha: ", password)
+        if(password == "xx"){
+        
+            navigation.navigate("TabsOwner")
+        }else{
+            navigation.navigate("Tab")
+        }
+        
+    }
     return(
         <ScrollView style={styles.container}>
             
@@ -23,8 +36,8 @@ export default function login({navigation}){
 
                     {/*Inputs */}
                     <InputDefault label='Email'/>
-                    <InputDefault label='Senha' password={true}/>
-                    <ButtonDefault title='Entrar' textColor='#000' onpress={()=>navigation.navigate("Tab")}/>
+                    <InputDefault label='Senha' password={true} onChange={setPassword}/>
+                    <ButtonDefault title='Entrar' textColor='#000' onpress={handleLogin}/>
 
                     <View style={{flexDirection:'row',justifyContent:'center', marginTop:"10%"}}>
                         <Text style={styles.textLogin}>Não tem uma conta?</Text>

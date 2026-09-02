@@ -5,7 +5,7 @@ import { Calendar } from 'react-native-calendars';
 import { useState } from "react";
 
 
-export default function OwnerAppointments(){
+export default function OwnerAppointments({navigation}){
 
      const [selectedDate, setSelectedDate] = useState(null);
      const [calendar,setCalendar] = useState(false);

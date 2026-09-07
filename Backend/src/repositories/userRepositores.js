@@ -39,9 +39,17 @@ try {
 
 
     //fazer logica de caso o usuário seja dono da barbearia antes de retornar os dados;
-    
+    const [owner] = await POOL.query("SELECT * FROM barbershops WHERE user_id = ?", [user.id]);
 
-    return {token:token,name:user.name,email:user.email};
+    if(owner.length === 0){
+        console.log("usuário não possui barbearia")
+        return {token:token,name:user.name,email:user.email, owner:false};
+    }else{
+        console.log("usuário possui barbearia")
+        return {token:token,name:user.name,email:user.email, owner:true};
+    }
+
+    
 
 } catch (error) {
     console.error("falha ao verificar se o usuário existe na base de dados: ", error);

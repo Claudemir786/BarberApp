@@ -1,11 +1,13 @@
 
-import {Text,View,StyleSheet, TouchableOpacity,ScrollView} from 'react-native'
+import {Text,View,StyleSheet, TouchableOpacity,ScrollView, TextInput} from 'react-native'
 import {Picker} from '@react-native-picker/picker'
 import Logo from '../components/Logo'
 import ButtonDefault from '../components/Button'
 import InputDefault from '../components/Input'
 import { useEffect, useState } from 'react'
 import { getCities, getStates } from '../util/connIBGEapi.js'
+import createUser from '../service/UserService.js'
+import ErrorMessage from '../components/ErrorMessage.js'
 
 
 
@@ -16,6 +18,15 @@ export default function Register({navigation}){
     const [city,setCity] = useState("");
     const [states,setStates] = useState([]);
     const [state,setState] = useState("");
+    const [name,setName] = useState("");
+    const [email,setEmail] = useState("");
+    const [password,setPassword] = useState("");
+    const [secondPasword, setSecondPassword] = useState("");
+    const [failEmail, setFailEmail] = useState(false);
+    const [failPassword,setFailPassword] = useState(false);
+    const [comparePassWord,setComparePassword] = useState(true);
+    const [phone,setPhone] = useState("")
+
 
     useEffect(()=>{
         loadStates()
@@ -51,6 +62,77 @@ export default function Register({navigation}){
         }
     }
 
+    //finção que é chamada ao clicar no botãi de criar conta
+    async function handleCreate(){
+        try {
+
+            const pass = verificPassword();
+            const mail = verificEmail();
+
+            if(!pass || !mail)throw new Error("senha ou email não são validos");
+
+            const userCreate = await createUser(name,email,password,phone,city,state)
+
+            if(userCreate){
+                console.log("email e senha validados com sucessos");
+                alert("Usuário criado com sucesso")
+                navigation.navigate("Login")
+
+            }else{
+                alert("Não foi possível criar usuário novo");
+            }
+
+            
+            
+        } catch (error) {
+            console.error("falha ao criar usuário na base de dados: ",error.message);
+            
+        }
+
+    }
+
+    //verifica se a senha é valida e se coencidem
+    const verificPassword = ()=> {
+        //compara as duas senhas primerio
+        if(password !== secondPasword){
+            console.log("senha não são iguais")
+            setComparePassword(false);
+            return false;
+        }else{
+            //verifia se a senha contém letra minuscula, maiuscula,numero e simbolo 
+            const validPassword =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+
+            if(validPassword.test(password)){
+                console.log("senha valida");
+                return true;
+            }else{
+                console.log('senha invalida');
+                 setFailPassword(true)
+                return false;
+               
+            }
+        }
+        
+
+    }
+
+    //verifca se o e-mail é valido
+    const verificEmail = ()=> {
+        const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if(validEmail.test(email)){
+            console.log("email válido");
+            return true
+
+        }else{
+            console.log("email inválido")
+            setFailEmail(true);
+            return false;
+        }
+    }
+
+  
+
     return(
         <ScrollView style={styles.container}>
              
@@ -67,8 +149,23 @@ export default function Register({navigation}){
 
                 {/*Inputs */}
 
-                <InputDefault label='Nome'/>
-                <InputDefault label='Email'/>
+                <InputDefault label='Nome' value={name} onChange={setName}/>
+                
+                <InputDefault label='Email' value={email} onChange={setEmail}/>
+                
+                <Text style={styles.label}>Telefone</Text>
+                <TextInput
+                    placeholder="Digite seu telefone"
+                    keyboardType="numeric"
+                    value={phone}
+                    onChangeText={(text) => {
+                        setPhone(text.replace(/[^0-9]/g, ""));
+                    }}
+                    style={styles.inputPhone}
+                />
+
+                
+
                 {/*cidade/estado*/}
                 <View style={styles.viewPicker}>
                     
@@ -117,8 +214,21 @@ export default function Register({navigation}){
                 </View>
                     
                 
-                <InputDefault label='Senha' password={true}/>
-                <ButtonDefault title='Criar Conta' textColor='#000'/>
+                <InputDefault label='Senha' password={true} value={password} onChange={setPassword}/>
+                <InputDefault label='Digite a senha novamente' password={true} value={secondPasword} onChange={setSecondPassword}/>
+                {/*Email invalido*/}
+                {failEmail &&(
+                    <ErrorMessage text={"E-mail inválido, por favor digite um e-mail válido"}/>
+                )}
+
+                {failPassword &&(
+                    <ErrorMessage text={"Senha inválida, a senha deve conter letra maiuscula,minuscula, numero e caracter especial"}/>
+                )}
+
+                {!comparePassWord &&(
+                    <ErrorMessage text={"Senhas não coincidem"}/>
+                )}
+                <ButtonDefault title='Criar Conta' textColor='#000' onpress={handleCreate}/>
 
 
 
@@ -176,6 +286,21 @@ const styles = StyleSheet.create({
         fontSize:17,
         borderRadius:10,
         borderWidth:0
+    },
+   
+      inputPhone:{
+        backgroundColor:'#18181B',
+        borderRadius:10,
+        padding:16,
+        fontSize:22,
+        color:'#797377',
+        marginBottom:"10%"
+    },
+     label:{
+        color:"#fff",
+        fontSize:17,
+        fontWeight:'500',
+        marginBottom:'2%'
     }
-
 })
+

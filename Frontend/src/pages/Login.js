@@ -3,23 +3,77 @@ import Logo from '../components/Logo'
 import InputDefault from '../components/Input'
 import ButtonDefault from '../components/Button'
 import { useState } from 'react'
+import ErrorMessage from '../components/ErrorMessage'
+import { loginUser } from '../service/UserService'
 
 
 
 export default function login({navigation}){
 
     const [password,setPassword] = useState("")
+    const [email,setEmail] = useState("");
+    const [failPassword,setFailPassword] = useState(false);
+    const [failEmail,setFailEmail] = useState(false)
 
-    function handleLogin(){
-        console.log("variavel senha: ", password)
-        if(password == "xx"){
-        
-            navigation.navigate("TabsOwner")
+   async function handleLogin(){
+      try {
+        const mail = verificEmail();
+        const pass = verificPassword();
+
+        //if(!mail || !pass)throw new Error("email ou senha invalidos");
+
+        const result = await loginUser(email,password);
+
+        if(result){
+            console.log("login realizado com sucesso");
+            alert("Login realizado com sucesso");
         }else{
-            navigation.navigate("Tab")
+            alert("falha ao realizar o login");
         }
+
+        
+        
+      } catch (error) {
+        console.error("falha ao loga usuário: ", error.message);
+
+      }
+        
+      
         
     }
+
+     //verifica se a senha é valida e se coencidem
+    const verificPassword = ()=> {
+      
+            //verifia se a senha contém letra minuscula, maiuscula,numero e simbolo 
+            const validPassword =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+
+            if(validPassword.test(password)){
+                console.log("senha valida");
+                return true;
+            }else{
+                console.log('senha invalida'); 
+                setFailPassword(true)                
+                return false;
+               
+            }
+        }            
+
+    //verifca se o e-mail é valido
+    const verificEmail = ()=> {
+        const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if(validEmail.test(email)){
+            console.log("email válido");
+            return true
+
+        }else{
+            console.log("email inválido")
+            setFailEmail(true);
+            return false;
+        }
+    }
+
     return(
         <ScrollView style={styles.container}>
             
@@ -35,8 +89,19 @@ export default function login({navigation}){
                     <Text style={styles.subtitle}>Digite seu e-mail para acessar sua conta</Text>
 
                     {/*Inputs */}
-                    <InputDefault label='Email'/>
-                    <InputDefault label='Senha' password={true} onChange={setPassword}/>
+                    <InputDefault label='Email' value={email} onChange={setEmail}/>
+                    <InputDefault label='Senha' password={true} value={password} onChange={setPassword}/>
+
+                    {/*Senha incorreta */}
+                    {failPassword &&(
+                        <ErrorMessage text={"Senha inválida, a senha deve conter letra maiuscula,minuscula, numero e caracter especial"}/>  
+                    )}
+
+                    {/*Email invalido*/}
+                    {failEmail &&(
+                        <ErrorMessage text={"E-mail inválido, por favor digite um e-mail válido"}/>
+                    )}
+                    
                     <ButtonDefault title='Entrar' textColor='#000' onpress={handleLogin}/>
 
                     <View style={{flexDirection:'row',justifyContent:'center', marginTop:"10%"}}>

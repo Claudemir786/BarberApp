@@ -20,7 +20,7 @@ export default function Dashboard({navigation}){
             </View>
 
             {/*Corpo da pogina*/}
-            <View>
+            <View style={styles.body}>
                 <Text style={styles.action}>Ações</Text>
                 {/*Primeira Linha*/}
                 <View style={styles.line}>
@@ -93,18 +93,19 @@ const styles = StyleSheet.create({
         marginBottom:'10%'
     },
     line:{
-        flexDirection:'row',
-        width:'90%',
-        alignSelf:'center',
+        flexDirection:'row',       
         marginBottom:'5%',
         justifyContent:'space-between'
+        
     },
     button:{
         backgroundColor:'#18181B',       
         borderRadius:10,
-        height:150,
-        width:180,
-        justifyContent:'center'
+        alignSelf:'center',
+        height:140,
+        width:'47%',
+        padding:5
+        
     },
     icon:{
         backgroundColor:"#d4af3725",
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
         textAlign:'center'
     },
     subtitleButton:{
-        fontSize:15,
+        fontSize:13,
         color:'#797377',
         textAlign:'center'
     },
@@ -140,11 +141,13 @@ const styles = StyleSheet.create({
     action:{
         color:"#fff",
         fontSize:23,
-        fontWeight:'bold',
-        alignSelf:'center',
-        width:'90%',
+        fontWeight:'bold',        
         marginBottom:'3%'
 
+    }, 
+    body:{
+       alignSelf:'center',
+       width:'90%',
     }
 
 })

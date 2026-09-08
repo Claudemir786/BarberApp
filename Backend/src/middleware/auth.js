@@ -9,11 +9,12 @@ export async function authHeader(req,res,next){
     try {
         //pega os dados enviados no cabeçalho da requisição
         const header = req.headers.authorization;
+        //console.log("cabeçário da requisição: ", header);
         const [type,token] = header.split(" ");
 
         if(type !== "Bearer" || !token)return messageError(res,401,"credenciais enviadas incorretamente");
         //chama a função para verificar se o token é valido
-        const verify = await verifyToken(token)
+        const verify =  verifyToken(token)
 
         if(!verify)return messageError(res,401,"token invalido");
 

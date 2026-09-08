@@ -4,11 +4,17 @@ import pool from "../db/db.js";
 const POOL = pool;
 
 
-export async function getLocationBarberShop(city){
+export async function getLocationBarberShop(id){
     try {
 
-        //buscar também por estado
-        const [result] = await POOL.query(`SELECT * FROM barbershops WHERE city = ?`, [city]);
+        const [findUser] = await POOL.query(`SELECT * FROM users WHERE id = ?`, [id]);
+
+        if(findUser.length === 0)throw new Error("usuário não encontrado no banco de dados");
+
+        const user = findUser[0];
+
+        
+        const [result] = await POOL.query(`SELECT * FROM barbershops WHERE city = ?`, [user.city]);
 
 
         if(result.length === 0 )throw new Error("dados não retornaram corretamente do banco de dados");

@@ -126,7 +126,7 @@ export class User{
 
     async userAppointments(req,res){
         try {
-           //no futuro será o id do usuário logado 
+            console.log("cheguei aqui");
             const userId = req.user.id;
 
             const result = await getAppointments(userId);

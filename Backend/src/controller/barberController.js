@@ -7,13 +7,10 @@ export class BarberShop{
 
     async location(req,res){
       try {
-
-        //pega o valor que foi enviado por parametro
-        const city = req.query.city;
-        if(!city)return messageError(res,401,"dados não foram enviados corretamente");
-
-        console.log("cidade: ", city);
-        const result = await getLocationBarberShop(city);
+        console.log("chegeui aqui")
+        const id = req.user.id;
+      
+        const result = await getLocationBarberShop(id);
 
         if(!result)return messageError(res,400,"não foi possivel retornar dados disponiveis nessa região")
         

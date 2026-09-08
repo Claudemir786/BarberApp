@@ -1,5 +1,5 @@
 import { View,Text,StyleSheet } from "react-native";
-import Feather from '@expo/vector-icons/Feather';
+import { Feather } from "@expo/vector-icons";
 
 export default function Logo(){
 

@@ -1,9 +1,8 @@
 import {View,Text, TouchableOpacity, ScrollView} from "react-native"
 import ButtonDefault from "../components/Button"
 import { StyleSheet } from "react-native"
-import InputDefault from "../components/Input"
 import Logo from "../components/Logo"
-import Feather from '@expo/vector-icons/Feather';
+import Feather from "@expo/vector-icons/Feather";
 
 export default function index({navigation}){
 

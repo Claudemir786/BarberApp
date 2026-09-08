@@ -2,9 +2,75 @@ import { ScrollView,Text, View, StyleSheet, Touchable, TouchableOpacity } from "
 import Logo from "../components/Logo";
 import Feather from '@expo/vector-icons/Feather';
 import InputDefault from "../components/Input";
+import { useEffect, useState } from "react";
+import { GetInfoUser } from "../service/SecureStore";
+import { getUserAppointment } from "../service/UserService";
+import { getLocationBarbershop } from "../service/BarbeshopService";
+
 
 
 export default function Home({navigation}){
+    const [name,setName] = useState("");
+    const [searchBarbershop,setSearchBarbershop] = useState("");
+    const [userAppointment, setUserAppointment] = useState([]);
+    const [barbershops,setBarbershops] = useState([]);
+    const [findAppointment,setFindAppointment] = useState(true);
+    const [findLocactionB,setLocationB] = useState(true);
+
+    useEffect(()=>{
+        getName();
+        getInfoHome();
+    },[]);
+
+    //guarda o nome do usuário
+    const getName = async () =>{
+        let user = await GetInfoUser();
+        setName(user.name);
+    }
+
+    //função utilizada para chamar todas as informações que precisam estar na página
+    async function getInfoHome(){       
+        
+        try {
+        //agendamentos ativos
+        const appointment = await getUserAppointment();
+         if(appointment){
+            console.log("dados de agendamento encontrado");
+            setUserAppointment(appointment);
+        }else{
+            console.warn("Não foram encontrados dados de agendamento pára esse usuário");
+            setFindAppointment(false);
+        }
+
+        //barbearias próximas
+        const getBarbershops = await getLocationBarbershop();       
+        if(getBarbershops){
+            console.log("barbearias encontradas: ", getBarbershops);
+            setBarbershops(getBarbershops);
+
+        }else{
+            console.warn("não foram encontradas barbearias para essa região: ", getBarbershops);
+            setLocationB(false);
+        }
+
+        } catch (error) {
+            console.error("Falha ao carregar dados da pagina: ", error.message);
+        }
+    }
+
+
+    //função acionada após buscar algo no campo de busca da pagina
+    async function SearchBarberShop() {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
+
+
+
     return(
         <View style={styles.container}>
             {/*cabeçalho da pagina*/}
@@ -17,7 +83,7 @@ export default function Home({navigation}){
             <ScrollView style={styles.body}>
                 <View style={styles.title}>
                     <Text style={{color:'#fff',fontSize:28,fontFamily:'san-serif'}} >
-                    Olá usuário
+                    Olá {name}
                     </Text>
 
                 </View>

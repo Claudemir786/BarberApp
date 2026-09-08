@@ -20,13 +20,24 @@ export default function login({navigation}){
         const mail = verificEmail();
         const pass = verificPassword();
 
-        //if(!mail || !pass)throw new Error("email ou senha invalidos");
+        if(!mail || !pass)throw new Error("email ou senha invalidos");
 
         const result = await loginUser(email,password);
 
         if(result){
+
             console.log("login realizado com sucesso");
             alert("Login realizado com sucesso");
+
+            if(result.owner === false){
+
+                navigation.navigate("Tab")
+
+            }else{
+                
+                navigation.navigate("TabsOwner");
+            }
+            
         }else{
             alert("falha ao realizar o login");
         }

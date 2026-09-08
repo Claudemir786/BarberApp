@@ -1,15 +1,8 @@
+
+import options from "./ConfigRequest";
 import { SaveInfoUser, SaveToken } from "./SecureStore";
 
-const URL = "http://127.0.0.1:3000/api/";
-
-const options = (method, body)=>{       
-    return{
-        method:method,
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(body)
-    }     
-}
-
+const URL = "http://192.168.3.62:3000/api/";
 
 export default async function createUser(name,email,password,phone,city,state){
     try {
@@ -46,13 +39,30 @@ export async function loginUser(email,password){
         if(!userLogin.ok)throw new Error("Falha ao verificar se o usuário está cadastrado");
 
         const user = await userLogin.json();
-        /*await SaveToken(user.user.token);
-        await SaveInfoUser(user.user.name,user.user.email);*/
-        console.log("o que retornou: ", user);
-        return true;
+        await SaveToken(user.user.token);
+        await SaveInfoUser(user.user.name,user.user.email);
+        
+        return user.user;
         
     } catch (error) {
         console.error("Falha ao realizar o login de usuário: ", error.message)
+        return false;
+    }
+}
+
+export async function getUserAppointment(){
+    try {
+
+        const result = await fetch(`${URL}user/appointments`, await options("GET") );
+
+        if(!result.ok)throw new Error("não foram encontrados dados de agendamento desse usuário");
+
+        const appointments = await result.json();
+
+        return appointments.appointments;
+        
+    } catch (error) {
+        console.error("falha ao encontrar dados de agendamento do usuário: ", error);
         return false;
     }
 }

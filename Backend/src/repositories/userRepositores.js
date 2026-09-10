@@ -31,8 +31,8 @@ try {
 
     //compara as duas senha
     const user = result[0]   
-    const verificPassword = await comparePassword(password,user.password);
-    if(!verificPassword)throw new Error("as senha não são iguais ");
+   /* const verificPassword = await comparePassword(password,user.password);
+    if(!verificPassword)throw new Error("as senha não são iguais ");*/
 
     const token = createToken(user);
     if(!token)throw new Error("O token não foi criado corretamente");

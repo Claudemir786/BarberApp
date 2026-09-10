@@ -32,7 +32,7 @@ route.get("/api/user/appointment/history", authHeader, user.userAppointmentsHist
 //busca os barbeiros cadastrados
 route.get("/api/barber", authHeader, barber.getBarber);
 //busca a barbearia por nome
-route.get("/api/search/barbershop", authHeader, authHeader, barber.searchBarbershop);
+route.get("/api/search/barbershop", authHeader, barber.searchBarbershop);
 //cancela o agendamento
 route.put("/api/cancel/appointment", authHeader, barber.cancelAppointment);
 //faz o update de dados padrão da barbearia

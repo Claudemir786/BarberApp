@@ -1,21 +1,27 @@
-import { ScrollView,Text, View, StyleSheet, Touchable, TouchableOpacity } from "react-native";
+import { ScrollView,Text, View, StyleSheet, Touchable, TouchableOpacity, FlatList } from "react-native";
 import Logo from "../components/Logo";
 import Feather from '@expo/vector-icons/Feather';
 import InputDefault from "../components/Input";
 import { useEffect, useState } from "react";
 import { GetInfoUser } from "../service/SecureStore";
 import { getUserAppointment } from "../service/UserService";
-import { getLocationBarbershop } from "../service/BarbeshopService";
+import { getLocationBarbershop, searchBarbershopByName } from "../service/BarbeshopService";
+import CardAppointment from "../components/CardAppointment";
+import CardBarberShop from "../components/CardBarbershop";
 
 
 
 export default function Home({navigation}){
+
     const [name,setName] = useState("");
     const [searchBarbershop,setSearchBarbershop] = useState("");
     const [userAppointment, setUserAppointment] = useState([]);
     const [barbershops,setBarbershops] = useState([]);
     const [findAppointment,setFindAppointment] = useState(true);
-    const [findLocactionB,setLocationB] = useState(true);
+    const [findLocactionB,setFindLocationB] = useState(true);
+    const [findBarbershop,setFindBarbershop] = useState(false);
+    const [barbershopFinded,setBarbershopFinded] = useState("");
+    const [barbershopNotFinded,setNotFinded] = useState(false);
 
     useEffect(()=>{
         getName();
@@ -35,8 +41,13 @@ export default function Home({navigation}){
         //agendamentos ativos
         const appointment = await getUserAppointment();
          if(appointment){
-            console.log("dados de agendamento encontrado");
-            setUserAppointment(appointment);
+            console.log("dados de agendamento encontrado: ", appointment);
+            if(appointment == []){
+                setFindAppointment(false)
+            }else{
+                setUserAppointment(appointment);
+            }
+           
         }else{
             console.warn("Não foram encontrados dados de agendamento pára esse usuário");
             setFindAppointment(false);
@@ -47,10 +58,13 @@ export default function Home({navigation}){
         if(getBarbershops){
             console.log("barbearias encontradas: ", getBarbershops);
             setBarbershops(getBarbershops);
+            if(getBarbershops ==[]){
+                setFindLocationB(false)
+            }
 
         }else{
             console.warn("não foram encontradas barbearias para essa região: ", getBarbershops);
-            setLocationB(false);
+            setFindLocationB(false);
         }
 
         } catch (error) {
@@ -58,17 +72,31 @@ export default function Home({navigation}){
         }
     }
 
+    function goToBarbershop(id){
+        navigation.navigate("Barbershop",{id:id})
+    }
+    
 
     //função acionada após buscar algo no campo de busca da pagina
-    async function SearchBarberShop() {
+     async function findBarberShop() {
         try {
+            const barbershop = await searchBarbershopByName(searchBarbershop); 
+            
+            if(barbershop){
+                console.log("barbearia encontrada");
+                if(barbershop.length === 0 ){
+                    setNotFinded(true)
+                }
+                setBarbershopFinded(barbershop)
+                setFindBarbershop(true);
+            }else{
+                setNotFinded(true)
+            }            
             
         } catch (error) {
-            
+            console.error("falha ao buscar barbearias: ", error);
         }
     }
-
-
 
 
     return(
@@ -87,106 +115,61 @@ export default function Home({navigation}){
                     </Text>
 
                 </View>
-            
-                {/* view que mostra horario marcado*/}
-                <View style={styles.cardAppointment}>
 
-                    <View style={styles.titleCardAppointment}>
-
-                        <Text style={{color:'#D4AF37',fontSize:15,fontWeight:'600'}}>
-                            PRÓXIMO HORÁRIO
-                        </Text>
-                        <TouchableOpacity>
-                            <Text style={{color:'#797377'}}>Ver Todos</Text>
-                        </TouchableOpacity>
-                    </View>
-                    
-                    <View style={styles.informationAppointment}>
-
-                         {/*Icone */}   
-                        <View style={styles.iconAppointment}>
-                            <Feather name="scissors" size={26} color="#D4AF37" />
-                        </View>
-                        {/*informações do agendamento */}
-                        <View style={{flexDirection:'column'}}>
-                            <Text style={styles.titleCard}>
-                                Barbearia Dom Pedro
-                            </Text>
-                            <Text style={{color:'#797377',fontSize:15}}>
-                                com Carlos - Corte + barba
-                            </Text>
-                            <View style={styles.hourAppointment}>
-                                <Feather name="clock" size={20} color="#d4af37" />
-                                <Text style={{color:'#fff',fontSize:14}}> 10:00</Text>
-                            </View>
-                        </View>
-
-                    </View>
-
-                </View>
-
+                {/*se forem encontrados agendamentos*/}
+                {findAppointment &&(
+                   <FlatList
+                    data={userAppointment}
+                    keyExtractor={(item)=>item.id}
+                    renderItem={({item})=> <CardAppointment itemAppointment={item}/>}
+                    scrollEnabled={false}
+                   />
+                )}
+                
+               
+                 
                 {/*Busca*/}
                 <View style={styles.search}>
-                    <Text style={styles.searchTitle}>
-                        Barbearias Próximas
-                    </Text>                  
-                        
-                        <InputDefault 
-                        placeholder={'buscar barbearias' }                                          
-                        />                   
-                    
+                     <InputDefault 
+                        placeholder={'Buscar barbearias'}
+                        onChange={setSearchBarbershop}
+                        search={findBarberShop}  
+                        label="Buscar barbearia"                                    
+                    />                    
+                                                                                                                     
                 </View>
-                
-                {/*cards de barbearias */}
-                <View style={styles.cardBarbershop}>
-                    <TouchableOpacity style={{width:'90%', alignSelf:'center',marginTop:'5%',marginBottom:'5%'}}
-                        onPress={()=> navigation.navigate("Barbershop")}
-                    >
-                        {/*Nome da barbearia*/}
-                        <Text style={[styles.titleCard,{marginBottom:'1%'}]}>
-                            Barbearia Dom Pedro
-                        </Text>
+                {/*Renderiza barbearia encontrada */}
+                {findBarbershop &&(
+                    <>
+                        <Text style={[styles.searchTitle, {width:'90%', alignSelf:'center'}]}>Resultado da pesquisa: </Text>
+                        <CardBarberShop barbershop={barbershopFinded}/>
 
-                        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                            <Text style={{fontSize:15,color:'#797377',}}>Londrina-PR</Text>
-                            <Text style={{fontSize:15,color:'#797377'}}>a partir de</Text>
-                        </View>
-                            <Text style={[styles.titleCard,{textAlign:'right'}]}>R$ 35</Text>
-                    
-                    </TouchableOpacity>                                        
-                </View>
+                    </>
+                )} 
 
-                <View style={styles.cardBarbershop}>
-                    <View style={{width:'90%', alignSelf:'center',marginTop:'5%',marginBottom:'5%'}}>
-                        {/*Nome da barbearia*/}
-                        <Text style={[styles.titleCard,{marginBottom:'1%'}]}>
-                            Barbearia Dom Pedro
-                        </Text>
+                {/*se nã econtrar nada na busca*/}
+                {barbershopNotFinded &&(
+                    <>
+                        <Text style={[styles.searchTitle, {width:'90%', alignSelf:'center'}]}>Resultado da pesquisa: </Text>
+                        <Text style={styles.notFinded}>Não foram encontrados resultados na pesquisa</Text>
 
-                        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                            <Text style={{fontSize:15,color:'#797377',}}>Londrina-PR</Text>
-                            <Text style={{fontSize:15,color:'#797377'}}>a partir de</Text>
-                        </View>
-                            <Text style={[styles.titleCard,{textAlign:'right'}]}>R$ 35</Text>
-                    
-                    </View>                                        
-                </View>
-                <View style={styles.cardBarbershop}>
-                    <View style={{width:'90%', alignSelf:'center',marginTop:'5%',marginBottom:'5%'}}>
-                        {/*Nome da barbearia*/}
-                        <Text style={[styles.titleCard,{marginBottom:'1%'}]}>
-                            Barbearia Dom Pedro
-                        </Text>
+                    </>
+                )}
 
-                        <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                            <Text style={{fontSize:15,color:'#797377',}}>Londrina-PR</Text>
-                            <Text style={{fontSize:15,color:'#797377'}}>a partir de</Text>
-                        </View>
-                            <Text style={[styles.titleCard,{textAlign:'right'}]}>R$ 35</Text>
-                    
-                    </View>                                        
-                </View>
+                <Text style={[styles.searchTitle,{width:'90%', alignSelf:'center'}]}>
+                    Barbearias Próximas 
+                </Text>    
 
+                 {/*Se forem encontradas barbearias na região*/}
+                {findLocactionB &&(
+                    <FlatList 
+                        data={barbershops}
+                        keyExtractor={(item)=>item.id}
+                        renderItem={({item})=> <CardBarberShop barbershop={item} onPress={goToBarbershop}/>}
+                        scrollEnabled={false}
+                    />
+                )}
+                  
                 <View style={{marginBottom:'10%'}}></View>
                 {/*card de chamada para criação de barbearia */}
                 <View style={styles.cardCreateBarbeshop}>
@@ -290,8 +273,7 @@ const styles = StyleSheet.create({
     searchTitle:{
         color:"#fff",
         fontSize:25,
-        fontWeight:'600',
-        marginTop:'10%',
+        fontWeight:'600',       
         marginBottom:'5%',
       
     },
@@ -332,5 +314,12 @@ const styles = StyleSheet.create({
         width:50,
         justifyContent:'center',
         alignItems:'center'
+    },
+    notFinded:{
+        color:"#797377",
+        fontSize:16,
+        width:'90%',
+        alignSelf:'center',
+        marginBottom:'5%'
     }
 })

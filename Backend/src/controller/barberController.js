@@ -7,7 +7,7 @@ export class BarberShop{
 
     async location(req,res){
       try {
-        console.log("chegeui aqui")
+        //console.log("chegeui aqui")
         const id = req.user.id;
       
         const result = await getLocationBarberShop(id);

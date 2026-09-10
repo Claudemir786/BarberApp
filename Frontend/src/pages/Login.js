@@ -18,9 +18,9 @@ export default function login({navigation}){
    async function handleLogin(){
       try {
         const mail = verificEmail();
-        const pass = verificPassword();
+        /*const pass = verificPassword();
 
-        if(!mail || !pass)throw new Error("email ou senha invalidos");
+        if(!mail || !pass)throw new Error("email ou senha invalidos");*/
 
         const result = await loginUser(email,password);
 

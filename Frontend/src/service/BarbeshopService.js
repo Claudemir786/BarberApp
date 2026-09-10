@@ -22,3 +22,20 @@ export async function getLocationBarbershop(){
         return false;
     }
 }
+
+export async function searchBarbershopByName(nameBarbershop){
+    try {
+
+        const result = await fetch(`${URL}search/barbershop?name=${nameBarbershop}`, await options("GET"));
+
+        if(!result.ok)throw new Error("Dados não retornaram da API ou não foi encontrado nenhum dado da pesquisa");
+
+        const barbershop = await result.json();
+
+        return barbershop.barbershop[0];
+        
+    } catch (error) {
+        console.error("falha ao encontrar barbearia na base de dados: ", error);
+        return false;
+    }
+}

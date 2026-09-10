@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 
-export default function InputDefault({label="",placeholder,password,value,onChange}){
+export default function InputDefault({label="",placeholder,password,value,onChange,search}){
 
     return(
         <View style={styles.view}>
@@ -13,6 +13,7 @@ export default function InputDefault({label="",placeholder,password,value,onChan
             secureTextEntry={password}
             placeholder={placeholder}
             placeholderTextColor={"#797377"}
+            onSubmitEditing={search}
             
             />
 

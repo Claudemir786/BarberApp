@@ -14,7 +14,7 @@ export async function getLocationBarberShop(id){
         const user = findUser[0];
 
         
-        const [result] = await POOL.query(`SELECT * FROM barbershops WHERE city = ?`, [user.city]);
+        const [result] = await POOL.query(`SELECT id, name, address, city, contact_phone FROM barbershops WHERE city = ?`, [user.city]);
 
 
         if(result.length === 0 )throw new Error("dados não retornaram corretamente do banco de dados");

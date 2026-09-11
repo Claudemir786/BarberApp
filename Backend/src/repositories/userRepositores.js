@@ -83,7 +83,9 @@ export async function getAppointments(customer_id) {
                                                 a.status,
                                                 c.name AS barber,
                                                 s.title AS service_name,
-                                                b.name AS barbershop
+                                                s.price AS price,
+                                                b.name AS barbershop,
+                                                b.id AS barbershop_id
                                             FROM appointments a
                                             JOIN services s ON a.service_id = s.id
                                             JOIN barbershops b ON a.barbershop_id = b.id

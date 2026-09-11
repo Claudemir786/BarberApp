@@ -27,6 +27,8 @@ route.get("/api/available/services", authHeader, barber.availableServices);
 route.get("/api/barbershop/info", authHeader, barber.getBarbershop);
 //retorna os agendamentos que estão em vigor
 route.get("/api/user/appointments", authHeader, user.userAppointments);
+//retorna as informações do usuário
+route.get("/api/user/info", authHeader, user.userInfo);
 //retorna histórico de agendamentos antigo
 route.get("/api/user/appointment/history", authHeader, user.userAppointmentsHistory);
 //busca os barbeiros cadastrados

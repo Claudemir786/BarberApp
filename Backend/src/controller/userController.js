@@ -160,6 +160,19 @@ export class User{
       
     }
 
+    async userInfo(req,res){
+        try {
+
+            const userId = req.user.id;
+
+            
+            
+        } catch (error) {
+            console.error("Falha ao retornar dados do usuário: ", error);
+            return messageError(res,500,"Falha ao retornar dados e informações do usuário");
+        }
+    }
+
     
 
 

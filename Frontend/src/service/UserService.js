@@ -1,6 +1,6 @@
 
 import options from "./ConfigRequest";
-import { SaveInfoUser, SaveToken } from "./SecureStore";
+import { GetInfoUser, SaveInfoUser, SaveToken } from "./SecureStore";
 
 const URL = "http://192.168.3.62:3000/api/";
 
@@ -63,6 +63,22 @@ export async function getUserAppointment(){
         
     } catch (error) {
         console.error("falha ao encontrar dados de agendamento do usuário: ", error);
+        return false;
+    }
+}
+
+export async function cancelUserServiceAppointment(appointment_id) {
+    
+    try {
+        //console.log("cheguei no service")
+        const result = await fetch(`${URL}cancel/appointment`, await options("PUT", {appointment_id:appointment_id}))
+
+        if(!result.ok)throw new Error("de acordo com os dados enviados não foi possível concluir o cancelamento do agendamento em questão");
+
+        return true;
+        
+    } catch (error) {
+        console.error("Não foi possivel cancelar o agendamento: ", error);
         return false;
     }
 }

@@ -1,23 +1,19 @@
-import { Text, View, ScrollView, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import { Text, View, ScrollView, StyleSheet, TouchableOpacity, Modal, FlatList } from "react-native";
 import HeaderLogo from "../components/Header.js";
 import NotFound from "../components/NotFound.js";
 import Feather from '@expo/vector-icons/Feather';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonDefault from "../components/Button.js";
+import { cancelUserServiceAppointment, getUserAppointment } from "../service/UserService.js";
 
-export default function Appointments({navigation}){
+//array com os agendamentos
+//envio de cancelamento do agendamento
 
-    const [cancelAppointment, setCancelAppointment] = useState(false);
+//card que será renderizado ao carregar a pagina se o usuário tiver algum agendamento
+function CardInfoAppointment({appointment, onpress, onpressBarbershop}){
 
     return(
-        <ScrollView style={styles.container}>
-            <HeaderLogo/>
-            {/*Titulo da pagina */}
-            <View style={styles.viewTitle}>
-                <Text style={styles.title}>Agendamentos</Text>
-                <Text style={styles.subTitle}>Seus horários marcados e histórico</Text>
-            </View>
-
+        <>  
             <View style={styles.check}>
                 <View style={{height:37}}>
                     <Feather name="check-circle" size={23} color="#D4AF37" />
@@ -25,24 +21,16 @@ export default function Appointments({navigation}){
                 
                 <Text style={[styles.subTitle, {fontWeight:"700",marginLeft:'2%',textAlign:'center'}]}>EM VIGOR</Text>
             </View>
-
-            <Modal visible={cancelAppointment} transparent={true} animationType="fade">
-                <View style={styles.overlay}>
-                    <View style={styles.modal}>
-                        <Text style={{color:"#fff", fontSize:25, textAlign:'center', fontWeight:'400'}}>
-                            Tem certeza que deseja cancelar o agendamento?
-                        </Text>
-                        <View style={{marginTop:'5%'}}></View>
-                        <ButtonDefault title="Sim"/>
-                        <View style={{marginTop:'5%'}}></View>
-                        <ButtonDefault title="Não" color="#000" onpress={()=>setCancelAppointment(false)}/>
-                    </View>
-                </View>               
-
-            </Modal>
             <View style={styles.cardAppointment}>
                 <View style={styles.status}>
-                    <Text style={{color:'green', fontSize:18,fontWeight:'bold'}}>Confirmado</Text>
+                     {
+                        appointment.status === "confirmed" ? (
+                            <Text style={{color:'green', fontSize:18,fontWeight:'bold'}}>Confirmado</Text>
+                        ) :(
+                            <Text style={{color:'#D4AF37', fontSize:18,fontWeight:'bold'}}>Pendente</Text>
+                        )
+                    }
+                   
                 </View>
                 
                 <View style={styles.informationAppointment}>
@@ -53,22 +41,22 @@ export default function Appointments({navigation}){
                     </View>
                     {/*informações do agendamento */}
                     <View style={{flexDirection:'column'}}>
-                       
-                     
+                        
+                        
                         <Text style={styles.titleCard}>
-                            Barbearia Dom Pedro
+                            {appointment.barbershop}
                         </Text>
-                          
+                            
                         
                         <Text style={{color:'#797377',fontSize:15}}>
-                            com Carlos - Corte + barba
+                            com {appointment.barber} - {appointment.service_name}
                         </Text>
-                       
+                        
                         <View style={styles.hourAppointment}>
                             <Feather name="clock" size={20} color="#d4af37" />
-                            <Text style={{color:'#fff',fontSize:14}}> 10:00</Text>
+                            <Text style={{color:'#fff',fontSize:14}}> {appointment.appointment_time.slice(0,5)}</Text>
 
-                            <Text style={{fontSize:14,color:"#fff", marginLeft:'5%', fontWeight:'bold'}}>R$ 50,00</Text>
+                            <Text style={{fontSize:14,color:"#fff", marginLeft:'5%', fontWeight:'bold'}}>R$ {Number(appointment.price).toFixed(2).replace('.', ',')}</Text>
                         </View>
                     </View>                    
 
@@ -77,17 +65,144 @@ export default function Appointments({navigation}){
                 <View style={styles.viewButton}>
                     <TouchableOpacity 
                     style={styles.button}
-                    onPress={()=> setCancelAppointment(true)}
+                    onPress={()=> onpress(appointment.id)}
                     >
                         <Text style={[styles.textButton,{borderStartWidth:0}]}>Cancelar</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={()=>onpressBarbershop(appointment.barbershop_id)}>
+
                         <Text style={styles.textButton}>Ver barbearia</Text>
                     </TouchableOpacity>
                 </View>     
-            </View>
-            {/*<NotFound title="Não foi encontrado nenhum agendamento ativo"/>*/}
+        </View>
+    </>
+    )
 
+}
+
+
+
+
+export default function Appointments({navigation}){
+
+    const [cancelAppointment, setCancelAppointment] = useState(false);
+    const [appointments,setAppointments] = useState([]);
+    const [notFound,setNotFound] = useState(false);
+    const [reloadPage,setReloadPage] = useState(false);
+    const [idAppointment,setIdAppointement] = useState("");
+
+    //usado para carregar a página a primeira vez
+    useEffect(()=>{
+        userAppointments();
+    },[])
+
+    //recarrega a página qundo o usuário cancelar o agendamento
+    useEffect(()=>{
+        userAppointments();
+    },[reloadPage])
+
+
+    function navigationForBarbershop(id){
+        navigation.navigate("Barbershop",{id:id})
+
+    }
+
+    //retorna os agendamentos
+    async function userAppointments(){
+        try {
+
+            const result = await getUserAppointment();
+
+            if(result){
+                if(result.lenght === 0){
+                    setNotFound(true)
+                }else{
+                    console.log("Agendamentos retornados com sucesso");
+                    setAppointments(result);
+                }
+            }else{
+                console.error("não possivel retornar dados corretamente")
+            }
+            
+        } catch (error) {
+              console.error("não possivel retornar dados corretamente")
+        }
+    }
+
+    function getIdAppointment(id){
+        setIdAppointement(id);
+        setCancelAppointment(true);
+    }
+   
+    //função que cancela o agendamento
+    async function cancelUserAppointment(){
+
+        try {
+            //console.log("cheguei na função de cancelamento, o id é esse: ", idAppointment);
+            setCancelAppointment(false)
+            const result = await cancelUserServiceAppointment(idAppointment);
+
+            if(result){
+                console.log("agendamento cancelado com sucesso");
+                if(reloadPage){
+                    setReloadPage(false)
+                }else{
+                    setReloadPage(true)
+                }
+
+            }else{
+                alert("não foi possivel cancelar o agendamento")
+            }
+            
+        } catch (error) {
+            console.error("Falha ao cancelar agendamento: ",error);
+
+        }
+    }
+
+
+
+    return(
+        <ScrollView style={styles.container}>
+            <HeaderLogo/>
+            {/*Titulo da pagina */}
+            <View style={styles.viewTitle}>
+                <Text style={styles.title}>Agendamentos</Text>
+                <Text style={styles.subTitle}>Seus horários marcados e histórico</Text>
+            </View>            
+
+            <Modal visible={cancelAppointment} transparent={true} animationType="fade">
+                <View style={styles.overlay}>
+                    <View style={styles.modal}>
+                        <Text style={{color:"#fff", fontSize:25, textAlign:'center', fontWeight:'400'}}>
+                            Tem certeza que deseja cancelar o agendamento?
+                        </Text>
+                        <View style={{marginTop:'5%'}}></View>
+                        <ButtonDefault title="Sim"  onpress={cancelUserAppointment}/>
+                        <View style={{marginTop:'5%'}}></View>
+                        <ButtonDefault title="Não" color="#000" onpress={()=>setCancelAppointment(false)}/>
+                    </View>
+                </View>               
+
+            </Modal>
+
+            <FlatList
+                data={appointments}
+                keyExtractor={(item)=>item.id}
+                renderItem={({item})=> <CardInfoAppointment 
+                appointment={item} 
+                onpress={getIdAppointment} 
+                onpressBarbershop={navigationForBarbershop}
+                />}
+                scrollEnabled={false}
+            />          
+            {notFound &&(
+                <>
+                <NotFound title="Não foi encontrado nenhum agendamento ativo"/>
+                </>
+            )}
+
+            {/*Esse botão encaminhara para uma pagina que não foi criada ainda e que vai mostrar todo o histórico de agendamentos */}
             <TouchableOpacity style={styles.buttonHistory}>
                 <Text style={{color:'#fff',fontSize:15}}>Histórico de atendimentos</Text>
                 <Feather name="chevron-right" size={24} color="#fff" />

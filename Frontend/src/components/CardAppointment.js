@@ -48,7 +48,8 @@ const styles = StyleSheet.create({
         backgroundColor:'#18181B',        
         borderRadius:10,
         width:'90%',
-        alignSelf:'center' 
+        alignSelf:'center',
+        marginBottom:"5%" 
     },
     titleCardAppointment:{
         flexDirection:'row',

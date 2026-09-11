@@ -90,7 +90,7 @@ export class BarberShop{
     }
     async cancelAppointment(req,res){
       try {
-
+        //console.log("cheguei aqui: ", req.body)
         const {appointment_id} = req.body;
 
         if(!appointment_id)return messageError(res,401,"dados foram enviados incorretamente");

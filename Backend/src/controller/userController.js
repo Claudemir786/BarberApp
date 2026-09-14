@@ -1,4 +1,4 @@
-import { createUser, deleteUser, getAppointments, getAppointmentsHistory, loginUser, postScheduling, updateEmailUser, updatePasswordUser } from "../repositories/userRepositores.js";
+import { createUser, deleteUser, getAppointments, getAppointmentsHistory, getInfoUser, loginUser, postScheduling, updateEmailUser, updatePasswordUser } from "../repositories/userRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -149,7 +149,7 @@ export class User{
             
             const result = await getAppointmentsHistory(userId);
 
-            if(!result)throw new Error("a respositores retornou false, histórico não encontrado ou falha ao buscar ps dados");
+            if(!result)throw new Error("a respositores retornou false, histórico não encontrado ou falha ao buscar os dados");
 
             return res.status(200).json({success:true, history:result});
             
@@ -165,6 +165,11 @@ export class User{
 
             const userId = req.user.id;
 
+            const result = await getInfoUser(userId);
+
+            if(!result)throw new Error("a repositories retornou false, dados do usuário não encontrado")
+            
+            return res.status(200).json({success:true,user:result});    
             
             
         } catch (error) {

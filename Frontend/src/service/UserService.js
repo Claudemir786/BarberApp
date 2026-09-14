@@ -2,7 +2,7 @@
 import options from "./ConfigRequest";
 import { GetInfoUser, SaveInfoUser, SaveToken } from "./SecureStore";
 
-const URL = "http://192.168.3.62:3000/api/";
+const URL = "http://192.168.3.43:3000/api/";
 
 export default async function createUser(name,email,password,phone,city,state){
     try {
@@ -79,6 +79,23 @@ export async function cancelUserServiceAppointment(appointment_id) {
         
     } catch (error) {
         console.error("Não foi possivel cancelar o agendamento: ", error);
+        return false;
+    }
+}
+
+export async function getInfoUser(){
+    try {
+
+        const result = await fetch(`${URL}user/info`, await options("GET"));
+
+        if(!result.ok)throw new Error("API não retornou os dados necessários");
+
+        const user = await result.json();
+
+        return user.user;
+        
+    } catch (error) {
+        console.error("Não foi possível buscar informações do usuário: ", error);
         return false;
     }
 }

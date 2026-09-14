@@ -180,3 +180,21 @@ export async function updateEmailUser(id,email){
     }
 
 }
+
+export async function getInfoUser(id){
+
+    try {
+
+        const [result] = await POOL.query(`SELECT id,name,email,phone,city FROM users WHERE id = ?`, [id]);
+
+        if(result.length === 0)throw new Error("dados não encontrados no banco de dados");
+
+        const user = result[0];
+        return user;
+        
+    } catch (error) {
+        console.error("Falha ao tentar buscar dados e informações do usuário: ", error )
+        return false;
+    }
+
+}

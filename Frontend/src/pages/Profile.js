@@ -2,8 +2,45 @@ import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from "react-nati
 import HeaderLogo from "../components/Header.js";
 import ButtonDefault from "../components/Button.js";
 import Feather from '@expo/vector-icons/Feather';
+import { useEffect, useState } from "react";
+import { GetInfoUser } from "../service/SecureStore.js";
+import { getInfoUser } from "../service/UserService.js";
 
 export default function Profile({navigation}){
+
+    const [user,setUser] = useState([]);
+    const [name,setName] = useState("");
+    const [email,setEmail] = useState("");
+
+    useEffect(()=>{
+
+         readInfoUser();
+         getUser()
+        
+    },[])
+
+    const readInfoUser = async ()=>{
+        let infoUser = await GetInfoUser()
+        setName(infoUser.name)
+        setEmail(infoUser.email);
+    }
+
+    async function getUser() {
+        try {
+
+            const user = await getInfoUser();
+
+            if(user){
+                setUser(user);
+            }else{
+                console.error("Não retornaram dados do usuário");
+            }
+            
+        } catch (error) {
+            console.error("Falha ao buscar dados do usuáro")
+        }
+    }
+
 
     return(
         <ScrollView style={styles.container}>
@@ -18,16 +55,16 @@ export default function Profile({navigation}){
                 </View>
                 
                 <View style={{marginBottom:'5%', marginTop:'5%'}}>
-                    <Text style={{color:'#fff', fontSize:20}}>Nome Usuário</Text>
+                    <Text style={{color:'#fff', fontSize:20}}>{name}</Text>
                     {/*email com o icone */}
                     <View style={{flexDirection:'row', marginTop:'2%'}}>
                         <Feather name="mail" size={20} color="#797377" />
-                        <Text style={{color:"#797377",fontSize:14,fontWeight:'700'}}>email@exemple.com</Text>
+                        <Text style={{color:"#797377",fontSize:14,fontWeight:'700'}}>{email}</Text>
                     </View>
                     {/*numero de telefone com o icone*/}
                     <View style={{flexDirection:'row'}}>
                         <Feather name="phone" size={20} color="#797377" />
-                        <Text style={{color:"#797377",fontSize:14,fontWeight:'700'}}>(43)99676-5432</Text>
+                        <Text style={{color:"#797377",fontSize:14,fontWeight:'700'}}>{user.phone}</Text>
                     </View>
                 </View>
             </View>
@@ -62,7 +99,7 @@ export default function Profile({navigation}){
 
                     <View style={{ marginBottom:'5%', marginTop:'5%'}}>
                         <Text style={styles.titleButton}>Endereço</Text>
-                        <Text style={styles.subtitleButton}>Londrina</Text>
+                        <Text style={styles.subtitleButton}>{user.city}</Text>
                     </View>
 
                 </TouchableOpacity>

@@ -2,7 +2,7 @@
 import options from "./ConfigRequest";
 import { GetToken } from "./SecureStore";
 
-const URL = "http://192.168.3.62:3000/api/";
+const URL = "http://192.168.3.43:3000/api/";
 
 
 

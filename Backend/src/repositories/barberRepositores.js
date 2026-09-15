@@ -148,14 +148,21 @@ export async function createBusinessHour(barbershop_id,weekday_open,weekday_clos
     }
 }
 
-export async function getInfoBarbershop(id){
+export async function getInfoBarbershop(id,barbershopId){
     try {
 
-        const [result] = await POOL.query(`SELECT * FROM barbershops WHERE user_id = ?`, [id]);
-        
-        if(result.length === 0 )throw new Error("não foram retornados dados do banco");
-        
+        if(id && !barbershopId){
+            const [result] = await POOL.query(`SELECT * FROM barbershops WHERE user_id = ?`, [id]);
+            if(result.length === 0 )throw new Error("não foram retornados dados do banco");
+            return result;
+        }
+                              
+        const [result] = await POOL.query(`SELECT * FROM barbershops WHERE id = ?`, [barbershopId]);
+
+        if(result.length === 0)throw new Error("dados não foram encontrados no banco");
+
         return result;
+       
 
     } catch (error) {
         console.error("falha ao buscar e retornar dados: ", error);

@@ -3,8 +3,31 @@ import ButtonDefault from "../components/Button"
 import { StyleSheet } from "react-native"
 import Logo from "../components/Logo"
 import Feather from "@expo/vector-icons/Feather";
+import { useEffect } from "react";
+import { GetToken } from "../service/SecureStore";
+import { isLogged } from "../service/UserService";
 
 export default function index({navigation}){
+
+    useEffect(()=>{
+       userIsLogged(); 
+    },[])
+
+    async function userIsLogged(){
+       try {
+            const result = await isLogged();
+
+            if(result.owner === true){
+                
+                navigation.navigate("TabsOwner")
+
+            }else if(result.owner === false){
+                navigation.navigate("Tab")
+            }
+       } catch (error) {
+            console.warn("Sessão do usuário não é mais valida")
+       }
+    }
 
     return(
         <View style={styles.container}>

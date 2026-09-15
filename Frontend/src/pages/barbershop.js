@@ -1,9 +1,11 @@
-import {Text,View,StyleSheet,TouchableOpacity, ScrollView, Modal} from 'react-native'
+import {Text,View,StyleSheet,TouchableOpacity, ScrollView, Modal,FlatList} from 'react-native'
 import HeaderLogo from '../components/Header'
 import Feather from '@expo/vector-icons/Feather';
 import ButtonDefault from '../components/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Calendar } from 'react-native-calendars';
+import { useRoute } from '@react-navigation/native';
+import { availableServicesBarbershop, getBarberFromBarbershop, infoBarbershop } from '../service/BarbeshopService';
 
 
 
@@ -13,6 +15,71 @@ export default function Barbershop({navigation}){
     const [stepTwo,setStepTwo]= useState(false)
     const [stepThree,setStepThree]= useState(false)
     const [selectedDate, setSelectedDate] = useState(null);
+    const [services,setServices] = useState([]);
+    const [barbers,setBarbers] = useState([]);
+    const [barbershop,setBarbershop] = useState([]);
+
+    const route = useRoute();
+    const id = route.params.id;
+    //console.log("id recebido: ", id);
+
+    useEffect(()=>{
+        getInfoBarbershop();
+        getBarber();
+        getServices();
+    },[]);
+
+    //buscar dados da barbaria,serviços e profissionais;
+    async function getInfoBarbershop(){
+        try {
+            const info = await infoBarbershop(id)
+
+            if(info){
+               
+                setBarbershop(info[0])
+            }else{
+                console.warn("Dados não retornaram")
+            }
+            
+        } catch (error) {
+            console.error("Dados da barbearia não chagaram na página: ", error);
+        }
+
+    }
+
+    async function getBarber(){
+        try {
+            const listBarbers = await getBarberFromBarbershop(id);
+
+            if(listBarbers){
+                console.log("barbers: ", barbers)
+                setBarbers(listBarbers)
+
+            }else{
+                console.warn("Dados de barbeiros cadastrados não encontrados")
+            }
+            
+        } catch (error) {
+            console.error("Informações de barbeiros não chegaram na página: ", error)
+        }
+    }
+
+    async function getServices() {
+        try {
+            const listServices = await availableServicesBarbershop(id);            
+            if(listServices){
+               
+                setServices(listServices)
+
+            }else{
+                console.warn("Serviços não chegaram na página")
+            }
+            
+        } catch (error) {
+            console.error("Lista de servuços disponiveis não chegaram na página: ", error);
+        }
+    }
+
 
 
     const horarios = [
@@ -46,9 +113,62 @@ export default function Barbershop({navigation}){
         )
     }
 
+      {/*Card com os serviços */}
+    function Services({serviceBabershop}){
+        return(
+            <>
+                 <View style={styles.card}>
+                    <View style={{alignSelf:'center', width:'90%'}}>
+                        <View style={styles.viewService}>
+                            <View>
+                                <Text style={styles.serviceName}>{serviceBabershop.title}</Text>
+                                <Text style={styles.timeService}>{serviceBabershop.duration_minutes} min</Text>
+                            </View>
+                            <View>
+                                <Text style={styles.priceService}>R$ {serviceBabershop.price}</Text>
+                            </View>
+                        </View>
+                    </View>
+                     
+                    </View>
+            </>
+        )
+    }
+
+    function Barbers({barber}){
+        return(
+            <>
+
+                <View style={styles.card}>
+
+                        <View style={{alignSelf:'center', width:'90%'}}>
+                            <View style={{flexDirection:'row'}}>
+                                {/*Icone */}
+                                <View style={styles.iconBarber}>
+                                    <Feather name="user" size={24} color="#fff" />
+                                </View>
+                                <View style={styles.viewService}>
+                                    <View>
+                                        <Text style={[styles.serviceName, {marginTop:'10%'}]}>{barber.name}</Text>
+                                        <Text style={{color:"#ffffff2d", fontSize:15}}>Barbeiro</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        
+                        </View>
+
+                </View>        
+                
+            </>
+        )
+    }
+
     return(
+
         <View style={styles.container}>
+
             <HeaderLogo/>
+
             <ScrollView>
                 {/*informações da barbearia */}
                 <View style={styles.informationBarbershop}>
@@ -62,7 +182,7 @@ export default function Barbershop({navigation}){
                     
                     
                         <Text style={styles.titleBarbershop}>
-                            Barbearia Dom Pedro
+                            {barbershop.name}
                         </Text>
                         
                         <View style={{flexDirection:'row'}}>
@@ -70,7 +190,7 @@ export default function Barbershop({navigation}){
                                 <Feather name="map-pin" size={16} color="#797377" />
                             </View>                        
                             <Text style={{color:'#797377',fontSize:16, marginLeft:'2%'}}>
-                            Rua das /palmeiras, 142 - centro
+                            {barbershop.address}
                             </Text>
                         </View>
 
@@ -79,7 +199,7 @@ export default function Barbershop({navigation}){
                                 <Feather name="phone" size={16} color="#797377" />
                             </View>                        
                             <Text style={{color:'#797377',fontSize:16, marginLeft:'2%'}}>
-                            43998652315
+                            {barbershop.contact_phone}
                             </Text>
                         </View>
                         
@@ -93,102 +213,26 @@ export default function Barbershop({navigation}){
                     <Text style={styles.titleCard}>Serviços</Text>
                 </View>
 
-                {/*Card com os serviços */}
-                <View style={styles.card}>
-                    <View style={{alignSelf:'center', width:'90%'}}>
-                        <View style={styles.viewService}>
-                            <View>
-                                <Text style={styles.serviceName}>Corte Clássico</Text>
-                                <Text style={styles.timeService}>30 min</Text>
-                            </View>
-                            <View>
-                                <Text style={styles.priceService}>R$ 35</Text>
-                            </View>
-                        </View>
-                    </View>
-                     {/*View que é somente uma linha para separar os dois componentes */}
-                    <View style={{ borderBottomWidth:1,borderColor:"#ffffff2d",}}></View>
-
-                        <View style={{alignSelf:'center', width:'90%'}}>
-                            <View style={styles.viewService}>
-                                <View>
-                                    <Text style={styles.serviceName}>Corte + Barba</Text>
-                                    <Text style={styles.timeService}>60 min</Text>
-                                </View>
-                            
-                                <View>
-                                    <Text style={styles.priceService}>R$ 60</Text>
-                                </View>
-                            </View>
-                       
-
-                        </View>
-                          {/*View que é somente uma linha para separar os dois componentes */}
-                         <View style={{ borderBottomWidth:1,borderColor:"#ffffff2d",}}></View>
-
-                        <View style={{alignSelf:'center', width:'90%'}}>
-                            <View style={styles.viewService}>
-                                <View>
-                                    <Text style={styles.serviceName}>Barba Completa</Text>
-                                    <Text style={styles.timeService}>30 min</Text>
-                                </View>
-                                <View>
-                                    <Text style={styles.priceService}>R$ 25</Text>
-                                </View>
-                            </View>
-                    
-                        </View>
-                        
-                       
-                   
-                </View>
-                
+                 {/*Renderiza os serviços */}   
+                <FlatList
+                    data={services}
+                    keyExtractor={(item)=>item.id}
+                    renderItem={({item})=> <Services serviceBabershop={item}/>}
+                    scrollEnabled={false}
+                />
 
                 {/*barbeiros */}
                 <View style={{width:'90%', alignSelf:'center'}}>
                     <Text style={styles.titleCard}>Profissionais</Text>
                 </View>
 
-                <View style={[styles.card, {marginBottom:'10%'}]}>
-
-                    <View style={{alignSelf:'center', width:'90%'}}>
-                        <View style={{flexDirection:'row'}}>
-                             {/*Icone */}
-                            <View style={styles.iconBarber}>
-                                <Feather name="user" size={24} color="#fff" />
-                            </View>
-                            <View style={styles.viewService}>
-                                 <View>
-                                     <Text style={[styles.serviceName, {marginTop:'10%'}]}>Carlos da Silva</Text>
-                                     <Text style={{color:"#ffffff2d", fontSize:15}}>Barbeiro</Text>
-                                </View>
-                            </View>
-                        </View>
-                       
-                    </View>
-
-                    {/*View que é somente uma linha para separar os dois componentes */}
-                    <View style={{ borderBottomWidth:1,borderColor:"#ffffff2d",}}></View>
-
-                    <View style={{alignSelf:'center', width:'90%'}}>
-                        <View style={{flexDirection:'row'}}>
-                             {/*Icone */}
-                            <View style={styles.iconBarber}>
-                                <Feather name="user" size={24} color="#fff" />
-                            </View>
-                            <View style={styles.viewService}>
-                                <View>
-                                     <Text style={[styles.serviceName, {marginTop:'10%'}]}>Marcos Ribeiro</Text>
-                                     <Text style={{color:"#ffffff2d", fontSize:15}}>Barbeiro</Text>
-                                </View>
-                               
-                                
-                            </View>
-                        </View>
-                       
-                    </View>
-                </View>               
-
+                {/*Renderiza os barbeiros */}                         
+                <FlatList
+                    data={barbers}
+                    keyExtractor={(item)=>item.id}
+                    renderItem={({item})=> <Barbers barber={item}/>}
+                    scrollEnabled={false}
+                />
               
 
             </ScrollView>
@@ -197,9 +241,9 @@ export default function Barbershop({navigation}){
                   
             </View>
 
-            /*parte da modais que vão ser mostradas passo a passo */
+            
 
-            //passo 1//
+            {/*passo 1*/}
             <Modal visible={stepOne} transparent={true} animationType='fade'>
                 <View style={styles.overlay}>
                     <View style={styles.modal}>
@@ -244,7 +288,7 @@ export default function Barbershop({navigation}){
 
             </Modal>
             
-            //passo 2//
+            {/*passo 2*/}
             <Modal visible={stepTwo} transparent={true} animationType='fade'>
                 <View style={styles.overlay}>
                     <View style={styles.modal}>
@@ -278,7 +322,7 @@ export default function Barbershop({navigation}){
                 </View>
             </Modal>
 
-            //passo 3
+            {/*passo 3*/}
             <Modal visible={stepThree} transparent={true} animationType='fade'>
                 
                 <View style={styles.overlay}>
@@ -296,7 +340,7 @@ export default function Barbershop({navigation}){
                             </View>
                            
                         </View>
-)}
+                        )}
                     </View>
                 </View>
                 
@@ -395,7 +439,8 @@ const styles = StyleSheet.create({
         alignSelf:'center',
         borderRadius:10,
         borderWidth:1,
-        borderColor:'#ffffff2d'
+        borderColor:'#ffffff2d',
+        marginBottom:"5%"
     },
     titleModal:{
         color:'#fff',

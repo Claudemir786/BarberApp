@@ -15,6 +15,8 @@ route.get("/api/test", (req,res)=>{
 
 //rotas barber,barbeShop
 
+//teste para verificar se o usuário ainda está autenticado
+route.get("/api/islogged", authHeader, user.isLogged)
 //barbearias da região
 route.get("/api/barbershop/location", authHeader, barber.location);
 //retorna dias e horarios de funcionamento

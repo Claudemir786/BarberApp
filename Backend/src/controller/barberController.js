@@ -73,7 +73,9 @@ export class BarberShop{
 
     async availableServices(req,res){
       try {
-        const {barbershopId} = req.body;
+        
+        const {barbershopId} = req.query;
+        
         if(!barbershopId)return messageError(res,401,"dados não foram enviados corretamente");
 
         const result = await getAvailableServices(barbershopId);
@@ -155,7 +157,16 @@ export class BarberShop{
     //recebe o id do usuário proprietario
     async getBarbershop(req,res){
       try {
-        
+        if(req.query){
+          const {barbershopId} = req.query;
+
+          if(!barbershopId)return messageError(res,401,"dados foram enviados incorretamente")
+          
+          const result = await getInfoBarbershop("",barbershopId)
+          if(!result)throw new Error("Repositories retornou falso ao buscar informações da barbearia");
+
+          return res.status(200).json({success:true, barbershop:result});
+        }
         //futuramente será o id do usuário
         const id = req.user.id;
 
@@ -163,7 +174,7 @@ export class BarberShop{
 
         if(!result)throw new Error("Repositories retornou falso ao buscar informações da barbearia");
 
-        res.status(200).json({success:true, barbershop:result});
+       return res.status(200).json({success:true, barbershop:result});
 
       } catch (error) {
         console.error("falha ao buscar dados: ", error);
@@ -221,7 +232,7 @@ export class BarberShop{
     async getBarber(req,res){
       try {
 
-        const {barbershopId} = req.body;
+        const {barbershopId} = req.query;
 
         if(!barbershopId)return messageError(res,401,"dados enviados incorretamente");
 

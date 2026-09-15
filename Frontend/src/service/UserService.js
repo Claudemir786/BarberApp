@@ -1,6 +1,6 @@
 
 import options from "./ConfigRequest";
-import { GetInfoUser, SaveInfoUser, SaveToken } from "./SecureStore";
+import { GetInfoUser, GetIsOwer, SaveInfoUser, SaveToken, SetIsOwner } from "./SecureStore";
 
 const URL = "http://192.168.3.43:3000/api/";
 
@@ -41,11 +41,12 @@ export async function loginUser(email,password){
         const user = await userLogin.json();
         await SaveToken(user.user.token);
         await SaveInfoUser(user.user.name,user.user.email);
+        await SetIsOwner(user.user.owner);
         
         return user.user;
         
     } catch (error) {
-        console.error("Falha ao realizar o login de usuário: ", error.message)
+        console.error("Falha ao realizar o login de usuário: ", error)
         return false;
     }
 }
@@ -98,4 +99,34 @@ export async function getInfoUser(){
         console.error("Não foi possível buscar informações do usuário: ", error);
         return false;
     }
+}
+
+export async function isLogged(){
+
+    try {    
+
+        const result = await fetch(`${URL}islogged`, await options("GET"));
+
+        if(!result.ok)throw new Error("usuário não está logado");
+
+        const owner = await GetIsOwer();
+        const user = await GetInfoUser();
+    console.log("usuário: ", user, "é dono: ", owner);
+        if(owner){
+            
+            return{owner:true,message:"usuário é dono"} 
+
+        }else{
+           
+            return{owner:false,message:"usuário comum"}
+
+        }
+            
+       
+        
+    } catch (error) {
+        console.error("falha ao verificar se o usuário está logado: ", error);
+        return false;
+    }
+    
 }

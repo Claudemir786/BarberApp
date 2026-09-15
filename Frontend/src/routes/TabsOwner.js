@@ -11,7 +11,7 @@ const TABS = createBottomTabNavigator();
 export default function TabsOwner({ navigation }) {
   return (
     <TABS.Navigator
-      initialRouteName="Dashboard"
+      initialRouteName="Inicio"
       screenOptions={{
         headerShown: false,
         tabBarStyle: { backgroundColor: "#27272A", height: 90, padding: 5 },

@@ -178,7 +178,9 @@ export class User{
         }
     }
 
-    
+    async isLogged(req,res){
+        messageSuccess(res,200,"conectado copm sucesso");
+    }
 
 
 }

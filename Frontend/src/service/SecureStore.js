@@ -30,3 +30,11 @@ export async function GetInfoUser(){
     return{name:nameUser, email:emailUser};
 
 }
+
+export async function SetIsOwner(owner) {
+    await SecureStore.setItemAsync("owner", owner);
+}
+
+export async function GetIsOwer(){
+    return await SecureStore.getItemAsync("owner")
+}

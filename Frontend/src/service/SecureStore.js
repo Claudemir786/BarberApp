@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 
 //salva token
 export async function SaveToken(token){
+    
     await SecureStore.setItemAsync("token", token)
 }
 

@@ -6,20 +6,38 @@ import { useEffect, useState } from 'react';
 import { Calendar } from 'react-native-calendars';
 import { useRoute } from '@react-navigation/native';
 import { availableServicesBarbershop, getBarberFromBarbershop, infoBarbershop } from '../service/BarbeshopService';
+import { getAvailableHoursDay, postAppointment} from '../service/UserService';
+import '../config/calendarConfig'
 
 
 
 export default function Barbershop({navigation}){
 
-    const [stepOne,setStepOne]= useState(false)
-    const [stepTwo,setStepTwo]= useState(false)
-    const [stepThree,setStepThree]= useState(false)
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [stepOne,setStepOne]= useState(false);
+    const [stepTwo,setStepTwo]= useState(false);
+    const [stepThree,setStepThree]= useState(false);   
+    const [stepFour,setStepFour] = useState(false); 
     const [services,setServices] = useState([]);
     const [barbers,setBarbers] = useState([]);
     const [barbershop,setBarbershop] = useState([]);
+    const [hours,setHours] = useState([]);
+    
+    
+    //Ids dos dados para agendamento
+    const [serviceId,setServiceId] = useState("");
+    const [hour,setHour] = useState("");
+    const [barberId,setBarberId] = useState("");
+    const [selectedDate, setSelectedDate] = useState(null);
+
+    //estados usados para mostrar na etapa final antes do agendamento
+    const [chosenDate,setChosenDate] = useState("")
+    const [chosenService,setChosenService] = useState("");
+    const [chosenBarber,setChosenBarber] = useState("");
+    const [chosenPrice,setChosenPrice] = useState("");
+
 
     const route = useRoute();
+    //id da barbearia que é passado por parâmetro
     const id = route.params.id;
     //console.log("id recebido: ", id);
 
@@ -28,6 +46,9 @@ export default function Barbershop({navigation}){
         getBarber();
         getServices();
     },[]);
+
+
+    //FUNÇÕES DE BUSCA E MANIPULAÇÃO DE DADOS
 
     //buscar dados da barbaria,serviços e profissionais;
     async function getInfoBarbershop(){
@@ -80,19 +101,54 @@ export default function Barbershop({navigation}){
         }
     }
 
+    async function handleAvailableTime(date){
+        try {
+            console.log("data escolhida: ", date);
+           const getChosenDate = new Date(date);
+            setChosenDate(getChosenDate.toLocaleDateString('pt-BR'))
+            console.log(getChosenDate)
+            
+            const getHours = await getAvailableHoursDay(date,id,barberId);
+
+            if(getHours){
+                console.log(getHours);
+                setHours(getHours);
+            }else{
+                setHours([]);
+                console.log("horarios disponiveis não chegaram na página");
+            }
+            
+        } catch (error) {
+            console.error("falha ao verificar horários disponíveis")
+        }
+
+    }
+
+    async function  handleCreateAppointment(){
+       
+        try {            
+            
+            const createAppointment = await postAppointment(id,serviceId,barberId,selectedDate,hour)
+           
+            if(createAppointment){
+                alert("agendamento criado com sucesso");
+                setStepFour(false);
+                setSelectedDate(null);
+                setHour("");
+
+            }else{
+                console.warn("o agendamento não foi criado")
+            }
+            
+        } catch (error) {
+            console.error("Falha ao criar agendamento: ", error);
+        }
+        
+    }
 
 
-    const horarios = [
-    "09:00",
-    "09:30",
-    "10:00",
-    "10:30",
-    "11:00",
-    "14:00",
-    "14:30",
-    "15:00",
-    "15:30"
-];
+    //COMPONENTES UTILIZADOS PARA MOSTRAR RESULTADPS DE AÇÕES NA PÁGINA
+
     //calendario
     function CalendarScreen(){
         const today = new Date().toISOString().split("T")[0];
@@ -104,11 +160,21 @@ export default function Barbershop({navigation}){
                 calendarBackground:"#18181B",
                 textSectionTitleColor:"#D4AF37",
                 dayTextColor:'#D4AF37',
-                 textDisabledColor: "#ffffff2d"
+                 textDisabledColor: "#ffffff2d",
+                
+
             }}
             onDayPress={(day)=>{
                 setSelectedDate(day.dateString);
+                handleAvailableTime(day.dateString);
             }}
+              markedDates={{
+                [selectedDate]: {
+                selected: true,
+                selectedColor: '#D4AF37',
+                selectedTextColor: '#18181B',
+        }
+    }}
             />
         )
     }
@@ -159,6 +225,54 @@ export default function Barbershop({navigation}){
 
                 </View>        
                 
+            </>
+        )
+    }
+
+    //componente que rederiza os serviços na modal
+    function StepOneButtonsServices({itemService}){
+        return(
+            <>
+                <TouchableOpacity 
+                onPress={()=>{
+                    setServiceId(itemService.id);
+                    setChosenPrice(itemService.price)
+                    setChosenService(itemService.title)
+                    setStepTwo(true);
+                    setStepOne(false);
+
+                }
+                }
+                style={styles.buttonModal}
+                >
+                    <View>
+                        <Text style={styles.nameButtonModal}>{itemService.title}</Text>
+                        <Text style={styles.timeButtonModal}>{itemService.duration_minutes} min</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.nameButtonModal}>R${itemService.price}</Text>
+                    </View>
+                </TouchableOpacity>
+            </>
+        )
+    }
+
+    //componente que renderiza os barbeiros dentro da modal
+    function StepTwoButtonBarbers({itemBarber}){
+        return(
+            <>
+                <TouchableOpacity style={styles.buttonModalBarber} 
+                onPress={()=>{
+                    setStepThree(true);
+                    setStepTwo(false);
+                    setBarberId(itemBarber.id);
+                    setChosenBarber(itemBarber.name);
+                    }}>       
+                    <View>
+                        <Text style={styles.nameButtonModal}>{itemBarber.name}</Text>
+                        <Text style={styles.timeButtonModal}>Barbeiro</Text>
+                    </View>                  
+                </TouchableOpacity>
             </>
         )
     }
@@ -236,7 +350,7 @@ export default function Barbershop({navigation}){
               
 
             </ScrollView>
-            <View style={{width:'90%', alignSelf:'center', marginBottom:'5%'}}>
+            <View style={{width:'90%', alignSelf:'center', marginBottom:'15%'}}>
                   <ButtonDefault title='Agendar Agora' onpress={()=>setStepOne(true)} />
                   
             </View>
@@ -249,35 +363,13 @@ export default function Barbershop({navigation}){
                     <View style={styles.modal}>
                         <Text style={styles.titleModal} >Agendar Horário</Text>
                         <Text style={styles.subtitleModal}>Escolher o serviço desejado</Text>
-                        <TouchableOpacity 
-                        onPress={()=>setStepTwo(true)}
-                        style={styles.buttonModal}
-                        >
-                            <View>
-                                <Text style={styles.nameButtonModal}>Corte Degradê</Text>
-                                <Text style={styles.timeButtonModal}>30 min</Text>
-                            </View>
-                            <View>
-                                <Text style={styles.nameButtonModal}>R$50</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity 
-                        onPress={()=>{
-                            setStepTwo(true)
-                            stepOne(false)
-                        }}
-                        style={styles.buttonModal}
-                        >
-                            <View>
-                                <Text style={styles.nameButtonModal}>Corte Degradê</Text>
-                                <Text style={styles.timeButtonModal}>30 min</Text>
-                            </View>
-                            <View>
-                                <Text style={styles.nameButtonModal}>R$50</Text>
-                            </View>
-                        </TouchableOpacity>
-
+                        
+                        <FlatList
+                            data={services}
+                            keyExtractor={(item)=> item.id}
+                            renderItem={({item})=> <StepOneButtonsServices itemService={item}/>}
+                            
+                        />                        
 
                         <View style={{width:'50%', alignSelf:'center'}}>
                             <ButtonDefault title='Voltar' onpress={()=>setStepOne(false)}/>
@@ -293,22 +385,13 @@ export default function Barbershop({navigation}){
                 <View style={styles.overlay}>
                     <View style={styles.modal}>
                         <Text style={styles.titleModal}>Agendar Horário</Text>
-                        <Text style={styles.subtitleModal}>Ecolha um profissional</Text>
-                        <TouchableOpacity style={styles.buttonModalBarber} onPress={()=>setStepThree(true)}>
-                            
-                            <View>
-                                <Text style={styles.nameButtonModal}>Carlos Mendes</Text>
-                                <Text style={styles.timeButtonModal}>Barbeiro</Text>
-                            </View>                  
-                        </TouchableOpacity>
+                        <Text style={styles.subtitleModal}>Ecolha um profissional</Text>                      
 
-                        <TouchableOpacity style={styles.buttonModalBarber} onPress={()=>setStepThree(true)}>
-                            
-                            <View>
-                                <Text style={styles.nameButtonModal}>Carlos Mendes</Text>
-                                <Text style={styles.timeButtonModal}>Barbeiro</Text>
-                            </View>                  
-                        </TouchableOpacity>
+                        <FlatList
+                            data={barbers}
+                            keyExtractor={(item)=>item.id}
+                            renderItem={({item})=> <StepTwoButtonBarbers itemBarber={item}/>}
+                        />
 
                         <View style={{width:'50%', alignSelf:'center'}}>
                             <ButtonDefault title='voltar' onpress={()=>{
@@ -328,22 +411,86 @@ export default function Barbershop({navigation}){
                 <View style={styles.overlay}>
                     <View style={styles.modal}>
                         <CalendarScreen/>
-                        {selectedDate && (
-                        <View >
-                            <Text>Horários disponíveis</Text>
-                            <View style={{flexDirection:'row'}}>
-                                 {horarios.map((horario) => (
-                                <TouchableOpacity key={horario} >
-                                    <Text >{horario}</Text>
+                        {selectedDate && hours && (
+                        <View style={{width:"90%", alignSelf:'center'}} >
+                            <Text style={{color:"#fff", fontSize:15, marginBottom:'3%'}}>Horários disponíveis: </Text>
+                            <View style={{flexDirection:'row', flexWrap: 'wrap', alignSelf:'center', width:'90%'}}>
+                                 {hours.map((h) => (
+                                <TouchableOpacity 
+                                key={h} 
+                                onPress={()=>{
+                                    setHour(h)
+
+                                }}
+                                
+                                style = {hour === h ? styles.hSelected : styles.hDefault}
+                                >
+                                    <Text style={{textAlign:'center', color:'#fff'}} >{h.slice(0,5)}</Text>
                                 </TouchableOpacity>
                             ))}
+                       
                             </View>
                            
                         </View>
+                        
                         )}
+                        
+                        {/*Se não tiver horarios disponiveis para esse dia */}
+                         {hours == ""  &&(                           
+                            <>
+                                <View>
+                                    <Text style={{color:'#fff', fontSize:15, textAlign:'center'}}>Sem horarios disponiveis</Text>
+                                </View>
+                            </>
+                            
+                            
+                        )}    
+                      
+                        <View style={{marginTop:'5%'}}></View>
+                        <ButtonDefault title='Próximo' onpress={()=>{
+                            setStepThree(false);
+                            setStepFour(true);
+                        }}/>
                     </View>
                 </View>
                 
+            </Modal>
+
+            {/*PASSO 4 */}
+            <Modal visible={stepFour} transparent={true} animationType='fade'>
+                <View style={styles.overlay}>
+                    <View style={styles.modal}>
+                        <Text style={styles.titleCard}>Dados do Agendamento:</Text>
+
+                        <View style={[styles.card,{padding:10}]}>
+                            <Text style={[styles.serviceName, {fontWeight:'400'}]}>Serviço: {chosenService}</Text>
+                            <Text style={[styles.serviceName, {fontWeight:'400'}]}>Barbeiro: {chosenBarber}</Text>
+                            <Text style={[styles.serviceName, {fontWeight:'400'}]}>Preço: R${parseInt(chosenPrice)},00</Text>
+                            <Text style={[styles.serviceName, {fontWeight:'400'}]}>Dia: {chosenDate}</Text>
+                            <Text style={[styles.serviceName, {fontWeight:'400'}]}>Horario: {hour.slice(0,5)}</Text>
+                        </View>
+
+                        <View style={{width:'90%', alignSelf:'center'}}>
+                            <TouchableOpacity
+                                style={styles.buttonCancel}
+                                onPress={()=>{
+                                    setStepFour(false)
+                                }}
+                            >
+                                <Text style={styles.textButton}>Cancelar</Text>
+
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={[styles.buttonConfirmAppointment, {marginTop:'3%'}]}
+                                onPress={handleCreateAppointment}
+                            >
+                                <Text style={styles.textButton}>Confirmar</Text>
+                            </TouchableOpacity>
+                        </View>
+                        
+                    </View>
+                </View>
             </Modal>
 
            
@@ -493,7 +640,50 @@ const styles = StyleSheet.create({
         borderRadius:10,
         marginBottom:'3%',
         padding:15
-    }
+    },
+    hSelected:{
+        backgroundColor:'#D4AF37',
+        borderRadius:10,
+        padding:5,
+        marginLeft:'2%',
+        borderWidth:1,
+        borderColor:'#27272A',
+        marginBottom:'3%'
+
+    },
+    hDefault:{
+        borderRadius:10,
+        padding:5,
+        marginLeft:'2%',
+        borderWidth:1,
+        borderColor:'#27272A',
+        marginBottom:'3%'
+    },
+    buttonConfirmAppointment:{
+        borderWidth:1,
+        padding:12,
+        borderRadius:10,
+        borderColor:'#f7f7f73d',
+        backgroundColor:'#D4AF37'
+
+
+   },
+    buttonCancel:{
+        borderWidth:1,
+        padding:12,
+        borderRadius:10,
+        borderColor:'#f7f7f73d',
+        backgroundColor:'#000'
+   },
+    textButton:{
+        fontSize:20,
+        textAlign:'center',
+        fontWeight:'500',
+        color:"#fff"
+   },
+    
+   
+    
     
   
 })

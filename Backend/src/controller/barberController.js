@@ -49,8 +49,8 @@ export class BarberShop{
 
       try {
 
-        const {date,barbershop_id,barber_id} = req.body;
-        console.log(req.body);
+        const {date,barbershop_id,barber_id} = req.query;
+        console.log(req.query);
         if(!date || !barbershop_id || !barber_id)return messageError(res,401,"dados não foram enviados corretamente");
 
         const result = await getAvailableTimes(date,barbershop_id,barber_id);
@@ -61,6 +61,23 @@ export class BarberShop{
         if(result === "sunday"){
           return res.status(401).json({success:false, availableTimes:"não pode ser marcado no domingo"})
         }
+        
+        //verifica caso o dia escolhido seja o dia atual
+        const today = new Date().toISOString().split("T")[0];
+        if(today === date){
+          const now = new Date();
+          const hour = String(now.getHours());
+          const minutes = String(now.getMinutes());
+          const currentTime =  hour + ":"+ minutes + ":" + "00";
+
+          const validTimes = result.filter((h)=>{
+            if(h > currentTime){
+              return h;
+            }
+          })
+          return res.status(200).json({success:true, availableTimes:validTimes});
+        }
+        
 
         return res.status(200).json({success:true, availableTimes:result});
         

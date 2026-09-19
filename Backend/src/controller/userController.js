@@ -103,6 +103,7 @@ export class User{
     async scheduling(req,res){
 
         try {
+            //console.log("teste de chegada")
             const {barbershop_id,service_id,barber_id,appointment_date,appointment_time} = req.body;
             
             if(!barbershop_id || !service_id || !barber_id || !appointment_date || !appointment_time){

@@ -130,3 +130,41 @@ export async function isLogged(){
     }
     
 }
+
+export async function getAvailableHoursDay(date,barbershop_id,barber_id){
+
+    try {
+        const getHours = await fetch(`${URL}barber/available/times?date=${date}&barbershop_id=${barbershop_id}&barber_id=${barber_id}`, await options("GET"));
+
+        if(!getHours.ok)throw new Error("dados não retornaram da API");
+
+        const hours = await getHours.json();
+        
+        return hours.availableTimes;
+        
+    } catch (error) {
+        console.error("falha ao retornar horários disponiveis: ", error);
+        return false;
+    }
+}
+
+export async function postAppointment(barbershop_id,service_id,barber_id,appointment_date,appointment_time){
+    try {
+        //console.log("teste de chegada")
+        const appointment  = await fetch(`${URL}scheduling`, await options("POST", {
+            barbershop_id:barbershop_id,
+            service_id:service_id,
+            barber_id:barber_id,
+            appointment_date:appointment_date,
+            appointment_time:appointment_time
+        }))
+
+        if(!appointment.ok)throw new Error("não foi possivel criar agendamento");
+
+        return true;
+        
+    } catch (error) {
+        console.error("falha ao criar agendamento do usuário: ", error);
+        return false;
+    }
+}

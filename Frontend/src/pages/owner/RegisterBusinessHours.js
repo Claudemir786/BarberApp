@@ -3,6 +3,9 @@ import { useState } from "react";
 import DateTimePicker from '@react-native-community/datetimepicker'
 import Logo from "../../components/Logo";
 import ButtonDefault from "../../components/Button";
+import { useRoute } from "@react-navigation/native";
+import { registerBussinessHour } from "../../service/BarbeshopService";
+import { SetIsOwner } from "../../service/SecureStore";
 
 
 
@@ -14,6 +17,10 @@ export default function BusinessHours({navigation}){
         date.setHours(0,0,0,0);
         return date;
     }
+
+    const route = useRoute();
+    const barbershopId = route.params.id;
+    console.log("id enviado via rota: ", barbershopId);
 
     const [weekdayOpen,setWeekdayOpen] = useState(createInitialTime());
     const [weekdayClosed,setWeekdayClosed] = useState(createInitialTime());
@@ -31,6 +38,7 @@ export default function BusinessHours({navigation}){
     const handleWeekdayOpen = (event, selectedTime) =>{
         setShowPickerWeekdayOpen(false);
         if(selectedTime){
+
             setWeekdayOpen(selectedTime)
         }
     }
@@ -53,7 +61,27 @@ export default function BusinessHours({navigation}){
         }
     }
     
+    async function handleRegister(){
+        try {
+
+            const result = registerBussinessHour(barbershopId,weekdayOpen,weekdayClosed,saturday,saturdayOpen,saturdayClosed);
+
+            if(result){
+                console.log("horários de funcionamento cadastrados com sucesso");
+                await SetIsOwner(true);
+                navigation.navigate("TabsOwner");
+
+            }else{
+                console.warn("registro falhou");
+            }
+
+            
+        } catch (error) {
+            console.error("falha ao cadastrar horarios de funcionamento");
+        }
+    }
     
+   
     
 
     return(
@@ -169,7 +197,7 @@ export default function BusinessHours({navigation}){
                     )}    
                 </View>        
                 <View style={{marginTop:'10%'}}>
-                    <ButtonDefault color="#000" textColor="#D4AF37"/>
+                    <ButtonDefault color="#000" textColor="#D4AF37" onpress={handleRegister}/>
                 </View>
 
             </View>            

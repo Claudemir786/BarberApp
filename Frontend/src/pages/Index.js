@@ -17,11 +17,11 @@ export default function index({navigation}){
        try {
             const result = await isLogged();
 
-            if(result.owner === true){
+            if(result.owner){
                 
                 navigation.navigate("TabsOwner")
 
-            }else if(result.owner === false){
+            }else if(!result.owner){
                 navigation.navigate("Tab")
             }
        } catch (error) {

@@ -93,3 +93,83 @@ export async function getBarberFromBarbershop(barbershopId){
         return false
     }
 }
+
+export async function createBarbershop(name,address,city,contact_phone){
+    try {
+        
+        const barbershop = await fetch(`${URL}create/user/barbershop`, await options(
+            "POST", 
+            {name,address,city,contact_phone})
+        )
+
+        if(!barbershop.ok)throw new Error("API retornou falha, o usuário não foi criado com sucesso no backend");
+
+        const barbershopId = await barbershop.json(); 
+        return barbershopId.barbershopId;
+
+
+    } catch (error) {
+        console.error("Falha ao criar usuário na base de dados: ", error);
+        return false;
+    }
+}
+
+export async function registerBussinessHour(barberShopId,weekdayOpen,weekdayClose,works_saturday,
+              saturdayOpen,saturdayClose){
+                
+            
+    try {
+        
+        const weekday_open = alterHours(weekdayOpen);
+        const weekday_close = alterHours(weekdayClose);
+        let saturday_open;
+        let saturday_close;
+
+        if(works_saturday){
+            saturday_open = alterHours(saturdayOpen);
+            saturday_close = alterHours(saturdayClose);
+        }
+
+        console.log(barberShopId,weekday_open,weekday_close,works_saturday,
+              saturday_open,saturday_close)    
+
+
+        const result = await fetch(`${URL}create/openning/hours`, await options(
+            "POST",
+             {
+                barberShopId,
+                weekday_open,
+                weekday_close,
+                works_saturday,
+                saturday_open,
+                saturday_close 
+            } 
+        ))
+
+        if(!result.ok)throw new Error("Api retornou false, não foi possível registrar horario de functionamento")
+        
+        return true;
+
+    } catch (error) {
+        console.error("Falha ao registrar o horario de funcionamento da barbearia: ", error);
+        return false;
+    }
+}
+
+
+
+
+ //deixa os horarios no padrão correto para enviar para o banco
+    function alterHours(date){
+
+        const newDate = new Date(date);
+
+        const correctHours = newDate.toLocaleTimeString("pt-BR",{
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false
+        })
+
+        return correctHours;
+
+    }

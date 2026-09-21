@@ -5,6 +5,7 @@ import Logo from '../../components/Logo.js';
 import InputDefault from '../../components/Input.js';
 import ButtonDefault from '../../components/Button.js';
 import { getCities, getStates } from '../../util/connIBGEapi.js';
+import { createBarbershop } from '../../service/BarbeshopService.js';
 
 //nome,endereço,numero de contato, cidade 
 
@@ -14,7 +15,10 @@ export default function RegisterBarbershop({navigation}){
     const [city,setCity] = useState("");
     const [states,setStates] = useState([]);
     const [state,setState] = useState("");
-    const [phone,setPhone] = useState("")
+    const [phone,setPhone] = useState("");
+    const [nameBarbershop,setNameBarbershop] = useState("");
+    const [address,setAddress] = useState("");
+    const [barbershopId,setBarbershopId] = useState("");
 
     useEffect(()=>{
         loadStates()
@@ -23,6 +27,27 @@ export default function RegisterBarbershop({navigation}){
     useEffect(()=>{
         loadCitys();
     },[state])
+
+    async function handleCreate(){
+        try {
+
+            //console.log("nome: ", nameBarbershop, "endereço: ", address)
+
+            const result = await createBarbershop(nameBarbershop,address,city,phone);
+
+
+            if(result){
+                console.log("primeira parte concluida com sucesso: ", result);
+                navigation.navigate("BusinessHours", {id:result})
+
+            }else{
+                console.warn("falha ao cadastar barbearia");
+            }
+            
+        } catch (error) {
+            console.error("falha ao cadastrar barbearia")
+        }
+    }
 
     async function loadStates(){
         try {
@@ -66,8 +91,8 @@ export default function RegisterBarbershop({navigation}){
 
                 {/*Inputs */}
 
-                <InputDefault label='Nome da barbearia'/>
-                <InputDefault label='Endereço'/>
+                <InputDefault label='Nome da barbearia' onChange={setNameBarbershop}/>
+                <InputDefault label='Endereço' onChange={setAddress}/>
                 {/*telefone de contato*/}
                 <Text style={styles.label}>Telefone para contato</Text>
                 <View>
@@ -130,7 +155,7 @@ export default function RegisterBarbershop({navigation}){
 
                     </Picker>
                 </View>                                                   
-                <ButtonDefault title='Cadastrar barbearia' textColor='#000' onpress={()=> navigation.navigate("BusinessHours")}/>                               
+                <ButtonDefault title='Cadastrar barbearia' textColor='#000' onpress={handleCreate}/>                               
              </View>
         </ScrollView>
     )

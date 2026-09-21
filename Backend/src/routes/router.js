@@ -58,7 +58,7 @@ route.post("/api/scheduling", authHeader, user.scheduling);
 //cadastra uma barbearia
 route.post("/api/create/user/barbershop", authHeader, barber.createUserBarbershop);
 //cadastra o horario de funcionamento
-route.post("/create/opening/hours", authHeader, barber.createOpeningHours);
+route.post("/api/create/openning/hours", authHeader, barber.createOpeningHours);
 //deleta o usuário 
 route.delete("/api/delete/user", authHeader, user.delete);
 

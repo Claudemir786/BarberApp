@@ -129,14 +129,16 @@ export async function postCreateBabershop(userId,name,address,city,contact_phone
 }
 
 export async function createBusinessHour(barbershop_id,weekday_open,weekday_close,works_saturday,
-              saturday_open,saturday_close, works_sunday, sunday_open,sunday_close){
+              saturday_open=null,saturday_close=null){
+                console.log(barbershop_id,weekday_open,weekday_close,works_saturday,
+              saturday_open,saturday_close)
     try {
 
         const [result] = await POOL.query(`INSERT INTO business_hours(barbershop_id,weekday_open,weekday_close,works_saturday,
-                                           saturday_open,saturday_close, works_sunday, sunday_open,sunday_close)
-                                           VALUES(?,?,?,?,?,?,?,?,?)`, 
+                                           saturday_open,saturday_close)
+                                           VALUES(?,?,?,?,?,?)`, 
                                            [barbershop_id,weekday_open,weekday_close,works_saturday,
-                                            saturday_open,saturday_close, works_sunday, sunday_open,sunday_close]);
+                                            saturday_open,saturday_close]);
 
         if(result.affectedRows === 0)throw new Error("Falha no banco ao inserir horario de funcionamento");
         

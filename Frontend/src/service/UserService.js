@@ -112,7 +112,7 @@ export async function isLogged(){
         const owner = await GetIsOwer();
         const user = await GetInfoUser();
     console.log("usuário: ", user, "é dono: ", owner);
-        if(owner){
+        if(owner === "true"){
             
             return{owner:true,message:"usuário é dono"} 
 
@@ -168,3 +168,5 @@ export async function postAppointment(barbershop_id,service_id,barber_id,appoint
         return false;
     }
 }
+
+

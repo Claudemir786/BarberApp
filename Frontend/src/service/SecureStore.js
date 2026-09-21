@@ -33,7 +33,7 @@ export async function GetInfoUser(){
 }
 
 export async function SetIsOwner(owner) {
-    await SecureStore.setItemAsync("owner", owner);
+    await SecureStore.setItemAsync("owner",String(owner));
 }
 
 export async function GetIsOwer(){

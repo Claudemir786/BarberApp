@@ -2,19 +2,29 @@
 import {Text,View,TouchableOpacity,StyleSheet,FlatList} from 'react-native'
 import Feather from '@expo/vector-icons/Feather';
 
-export default function CardAppointment({itemAppointment}){
+export default function CardAppointment({itemAppointment, title}){
+
+    //altera o formato da data para o padrão brasileiro
+    const newDate = new Date(itemAppointment.appointment_date)
+    const correctDate = newDate.toLocaleDateString("pt-Br")
+
     return(
             <>
             {/*view que mostra horario marcado*/}
             <View style={styles.cardAppointment}>
+                {title &&(
+                    <>
+                        <View style={styles.titleCardAppointment}>
 
-                <View style={styles.titleCardAppointment}>
-
-                    <Text style={{color:'#D4AF37',fontSize:15,fontWeight:'600'}}>
-                        PRÓXIMO HORÁRIO
-                    </Text>
+                        <Text style={{color:'#D4AF37',fontSize:15,fontWeight:'600'}}>
+                            PRÓXIMO HORÁRIO
+                        </Text>
                     
                 </View>
+                    
+                    </>
+                )}
+              
                 
                 <View style={styles.informationAppointment}>
 
@@ -30,6 +40,7 @@ export default function CardAppointment({itemAppointment}){
                         <Text style={{color:'#797377',fontSize:15}}>
                             {itemAppointment.service_name}
                         </Text>
+                        <Text style={{color:'#797377',fontSize:15}}>{correctDate} </Text>
                         <View style={styles.hourAppointment}>
                             <Feather name="clock" size={20} color="#d4af37" />
                             <Text style={{color:'#fff',fontSize:14}}> {itemAppointment.appointment_time.slice(0,5)}</Text>

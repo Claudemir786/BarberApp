@@ -92,6 +92,7 @@ export async function getAppointments(customer_id) {
                                             JOIN barbers c ON a.barber_id = c.id 
                                             WHERE a.customer_id = ?
                                             AND a.status IN ('pending', 'confirmed')
+                                            AND a.appointment_date >= CURDATE();
                                             ;`,[customer_id]);
         
         if(!result.length === 0)throw new Error("não foram encontrados dados no banco referente a este usuário");
@@ -119,7 +120,7 @@ export async function getAppointmentsHistory(custumer_id){
                                             FROM appointments a
                                             JOIN services s ON a.service_id = s.id
                                             WHERE a.customer_id = ?
-                                            AND a.status = 'completed'`,[custumer_id]);
+                                            AND a.status IN ('pending', 'confirmed', 'completed')`,[custumer_id]);
         
         if(result.length === 0)throw new Error("não foram encontrados historico de agendamentos desse usuário");
         

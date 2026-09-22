@@ -4,13 +4,20 @@ import NotFound from "../components/NotFound.js";
 import Feather from '@expo/vector-icons/Feather';
 import { useEffect, useState } from "react";
 import ButtonDefault from "../components/Button.js";
-import { cancelUserServiceAppointment, getUserAppointment } from "../service/UserService.js";
+import { cancelUserServiceAppointment, getUserAppointment, getUserAppointmentHistory } from "../service/UserService.js";
+import CardAppointment from "../components/CardAppointment.js";
+import { GetReloadPageForAppointments } from "../service/SecureStore.js";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 //array com os agendamentos
 //envio de cancelamento do agendamento
 
 //card que será renderizado ao carregar a pagina se o usuário tiver algum agendamento
 function CardInfoAppointment({appointment, onpress, onpressBarbershop}){
+
+    const date = new Date(appointment.appointment_date);
+    const correctDate = date.toLocaleDateString("pt-Br")
 
     return(
         <>  
@@ -51,7 +58,7 @@ function CardInfoAppointment({appointment, onpress, onpressBarbershop}){
                         <Text style={{color:'#797377',fontSize:15}}>
                             com {appointment.barber} - {appointment.service_name}
                         </Text>
-                        
+                        <Text style={{color:'#797377',fontSize:15}}>{correctDate}</Text>
                         <View style={styles.hourAppointment}>
                             <Feather name="clock" size={20} color="#d4af37" />
                             <Text style={{color:'#fff',fontSize:14}}> {appointment.appointment_time.slice(0,5)}</Text>
@@ -90,17 +97,23 @@ export default function Appointments({navigation}){
     const [notFound,setNotFound] = useState(false);
     const [reloadPage,setReloadPage] = useState(false);
     const [idAppointment,setIdAppointement] = useState("");
+    const [buttonHistory,setButtonHistory] = useState(false);
+    const [appointmentHistory,setAppointmentHistory] = useState([])
 
-    //usado para carregar a página a primeira vez
-    useEffect(()=>{
+    useFocusEffect(
+        useCallback(()=>{
         userAppointments();
-    },[])
+        },[])
+    )
 
+   
     //recarrega a página qundo o usuário cancelar o agendamento
     useEffect(()=>{
         userAppointments();
     },[reloadPage])
 
+
+   
 
     function navigationForBarbershop(id){
         navigation.navigate("Barbershop",{id:id})
@@ -160,6 +173,28 @@ export default function Appointments({navigation}){
         }
     }
 
+    async function handleHistory(){
+        try {
+
+            setButtonHistory(true);
+
+            const history = await getUserAppointmentHistory();
+           // console.log(history)
+            if(history.lenght === 0){
+               console.warn("dados não chegaram na página") 
+
+            }else{
+                
+                console.log("histórico chegou na pagina com sucesso")
+                setAppointmentHistory(history);
+            }
+            
+        } catch (error) {
+            console.error("falha ao buscar histório de agendamentos antigos do usuário: ", error);
+            
+        }
+    }
+
 
 
     return(
@@ -203,10 +238,28 @@ export default function Appointments({navigation}){
             )}
 
             {/*Esse botão encaminhara para uma pagina que não foi criada ainda e que vai mostrar todo o histórico de agendamentos */}
-            <TouchableOpacity style={styles.buttonHistory}>
+            <TouchableOpacity 
+                style={styles.buttonHistory}
+                onPress={handleHistory}
+                >
                 <Text style={{color:'#fff',fontSize:15}}>Histórico de atendimentos</Text>
                 <Feather name="chevron-right" size={24} color="#fff" />
             </TouchableOpacity>
+
+            {/*Modal com o hitorico de agendamentos antigos*/}
+            <Modal animationType="fade" transparent={true} visible={buttonHistory}>
+                <View style={styles.overlay}>
+                    <View style={styles.modal}>
+                        <FlatList 
+                            data={appointmentHistory}
+                            keyExtractor={(item)=>item.id}
+                            renderItem={({item})=> <CardAppointment itemAppointment={item}/>}
+                        />
+
+                        <ButtonDefault title="Voltar" onpress={()=>setButtonHistory(false)}/>
+                    </View>
+                </View>
+            </Modal>
 
             
 
@@ -328,7 +381,7 @@ const styles = StyleSheet.create({
 
     modal: {
         width: '90%',
-        backgroundColor: '#18181B',
+        backgroundColor: '#000',
         padding: 20,
         borderRadius: 15,
     },

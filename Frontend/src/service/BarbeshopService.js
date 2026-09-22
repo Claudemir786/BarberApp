@@ -1,6 +1,6 @@
 
 import options from "./ConfigRequest";
-import { GetToken } from "./SecureStore";
+import { GetToken, SetReloadPageForAppointments } from "./SecureStore";
 
 const URL = "http://192.168.3.43:3000/api/";
 
@@ -147,7 +147,7 @@ export async function registerBussinessHour(barberShopId,weekdayOpen,weekdayClos
         ))
 
         if(!result.ok)throw new Error("Api retornou false, não foi possível registrar horario de functionamento")
-        
+        await SetReloadPageForAppointments(true)
         return true;
 
     } catch (error) {

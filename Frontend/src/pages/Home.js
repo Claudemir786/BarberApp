@@ -3,11 +3,13 @@ import Logo from "../components/Logo";
 import Feather from '@expo/vector-icons/Feather';
 import InputDefault from "../components/Input";
 import { useEffect, useState } from "react";
-import { GetInfoUser } from "../service/SecureStore";
+import { GetInfoUser, GetReloadPageForAppointments } from "../service/SecureStore";
 import { getUserAppointment } from "../service/UserService";
 import { getLocationBarbershop, searchBarbershopByName } from "../service/BarbeshopService";
 import CardAppointment from "../components/CardAppointment";
 import CardBarberShop from "../components/CardBarbershop";
+import { useCallback } from "react";
+import {useFocusEffect} from '@react-navigation/native';
 
 
 
@@ -22,11 +24,21 @@ export default function Home({navigation}){
     const [findBarbershop,setFindBarbershop] = useState(false);
     const [barbershopFinded,setBarbershopFinded] = useState("");
     const [barbershopNotFinded,setNotFinded] = useState(false);
+    
+
+    useFocusEffect(
+        useCallback(()=>{
+            getInfoHome();
+        },[])
+    )
 
     useEffect(()=>{
         getName();
         getInfoHome();
     },[]);
+
+    
+
 
     //guarda o nome do usuário
     const getName = async () =>{
@@ -98,7 +110,7 @@ export default function Home({navigation}){
         }
     }
 
-
+   
     return(
         <View style={styles.container}>
             {/*cabeçalho da pagina*/}
@@ -121,7 +133,7 @@ export default function Home({navigation}){
                    <FlatList
                     data={userAppointment}
                     keyExtractor={(item)=>item.id}
-                    renderItem={({item})=> <CardAppointment itemAppointment={item}/>}
+                    renderItem={({item})=> <CardAppointment itemAppointment={item} title={true}/>}
                     scrollEnabled={false}
                    />
                 )}

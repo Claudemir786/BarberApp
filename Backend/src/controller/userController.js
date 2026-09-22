@@ -147,6 +147,7 @@ export class User{
         try {
            
             const userId = req.user.id;
+           // console.log("cheguei")
             
             const result = await getAppointmentsHistory(userId);
 

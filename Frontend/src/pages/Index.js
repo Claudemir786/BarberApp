@@ -17,12 +17,15 @@ export default function index({navigation}){
        try {
             const result = await isLogged();
 
-            if(result.owner){
+            if(result.owner == true){
                 
                 navigation.navigate("TabsOwner")
 
-            }else if(!result.owner){
+            }else if(result.owner == false){
                 navigation.navigate("Tab")
+
+            }else{
+                console.log("usuário não está logado")
             }
        } catch (error) {
             console.warn("Sessão do usuário não é mais valida")

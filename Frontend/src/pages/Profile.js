@@ -3,8 +3,9 @@ import HeaderLogo from "../components/Header.js";
 import ButtonDefault from "../components/Button.js";
 import Feather from '@expo/vector-icons/Feather';
 import { useEffect, useState } from "react";
-import { GetInfoUser } from "../service/SecureStore.js";
+import { ClearUserData, GetInfoUser} from "../service/SecureStore.js";
 import { getInfoUser } from "../service/UserService.js";
+
 
 export default function Profile({navigation}){
 
@@ -41,6 +42,19 @@ export default function Profile({navigation}){
         }
     }
 
+    async function handleLogout(){
+        try {
+
+           await ClearUserData(); 
+            navigation.reset({
+                index: 0,
+                routes:[{name: "Index"}]
+            })
+            
+        } catch (error) {
+            console.error("Falha ao fazer o Logout: ", error);
+        }
+    }
 
     return(
         <ScrollView style={styles.container}>
@@ -137,7 +151,7 @@ export default function Profile({navigation}){
             </View>
 
             <View style={{width:'90%', alignSelf:'center', marginTop:'5%', marginBottom:'10%'}}>
-                <ButtonDefault title="Sair" color="#000" borderColor="#D4AF37" textColor="#D4AF37"/>
+                <ButtonDefault title="Sair" color="#000" borderColor="#D4AF37" textColor="#D4AF37" onpress={handleLogout}/>
             </View>
 
         </ScrollView>

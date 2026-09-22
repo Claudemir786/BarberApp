@@ -111,7 +111,7 @@ export async function isLogged(){
 
         const owner = await GetIsOwer();
         const user = await GetInfoUser();
-    console.log("usuário: ", user, "é dono: ", owner);
+        console.log("usuário: ", user, "é dono: ", owner);
         if(owner === "true"){
             
             return{owner:true,message:"usuário é dono"} 
@@ -126,6 +126,7 @@ export async function isLogged(){
         
     } catch (error) {
         console.error("falha ao verificar se o usuário está logado: ", error);
+
         return false;
     }
     
@@ -169,4 +170,19 @@ export async function postAppointment(barbershop_id,service_id,barber_id,appoint
     }
 }
 
+export async function getUserAppointmentHistory(){
+    try {
 
+        const history = await fetch(`${URL}user/appointment/history`, await options("GET"));
+
+        if(!history.ok)throw new Error("Dados de histórico não retornaram da API");
+
+        const appointmentHistory = await history.json();
+        //console.log(appointmentHistory.history);
+        return appointmentHistory.history;
+        
+    } catch (error) {
+        console.error("Falha ao buscar o histórico de agendamentos antigos do usuário: ", error);
+        return false;
+    }
+}

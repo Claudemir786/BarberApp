@@ -39,3 +39,12 @@ export async function SetIsOwner(owner) {
 export async function GetIsOwer(){
     return await SecureStore.getItemAsync("owner")
 }
+
+export async function ClearUserData(){
+    await SecureStore.deleteItemAsync("token")
+    await SecureStore.deleteItemAsync("name")
+    await SecureStore.deleteItemAsync("email")
+    await SecureStore.deleteItemAsync("owner")
+    
+}
+

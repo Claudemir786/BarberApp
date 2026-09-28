@@ -1,4 +1,4 @@
-import { createBusinessHour, getAvailableServices, getAvailableTimes, getBarbershopByName, getInfo, getInfoBarbershop, getLocationBarberShop, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
+import { createBusinessHour, getAvailableServices, getAvailableTimes, getBarbershopByName, getDataBarbershopUser, getInfo, getInfoBarbershop, getLocationBarberShop, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -306,4 +306,22 @@ export class BarberShop{
       }
     }
 
+    async getBarbshopByUserId(req,res){
+      try {
+
+        const userid = req.user.id;
+
+        const result = await getDataBarbershopUser(userid);
+
+        if(!result)throw new Error("Não foram encontrados dados desse usuário");
+
+        return res.status(200).json({success:true, barbershop:result})
+        
+        
+      } catch (error) {
+        console.error("falha ao retornar dados da barbearia do usuário: ", error);
+        return messageError(res,400,"Não foi possível retornar dados da barbearia do usuário");
+      }
+      
+    }
 }

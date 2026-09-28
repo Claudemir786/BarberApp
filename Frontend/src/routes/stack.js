@@ -8,6 +8,7 @@ import Barbershop from "../pages/barbershop.js";
 import RegisterBarbershop from "../pages/owner/RegisterBarbershop.js";
 import BusinessHours from "../pages/owner/RegisterBusinessHours.js";
 import TabsOwner from "./TabsOwner.js";
+import RegisterService from "../pages/owner/RegisterService.js";
 
 const STACK = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export default function Stack(){
             <STACK.Screen name="RegisterBarbershop" component={RegisterBarbershop}/>
             <STACK.Screen name="BusinessHours" component={BusinessHours}/>
             <STACK.Screen name="TabsOwner" component={TabsOwner}/>
+            <STACK.Screen name="Rservice" component={RegisterService}/>
 
        </STACK.Navigator>
     )

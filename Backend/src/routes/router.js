@@ -19,6 +19,8 @@ route.get("/api/test", (req,res)=>{
 route.get("/api/islogged", authHeader, user.isLogged)
 //barbearias da região
 route.get("/api/barbershop/location", authHeader, barber.location);
+//retorna os dados da barbearia do usuário dono
+route.get("/api/info/barbershop", authHeader, barber.getBarbshopByUserId);
 //retorna dias e horarios de funcionamento
 route.get("/api/barbershop/info/businesshour", authHeader, barber.infoBusinessHours);
 //retorna os horarios disponiveis no dia selecionado
@@ -61,6 +63,7 @@ route.post("/api/create/user/barbershop", authHeader, barber.createUserBarbersho
 route.post("/api/create/openning/hours", authHeader, barber.createOpeningHours);
 //deleta o usuário 
 route.delete("/api/delete/user", authHeader, user.delete);
+
 
 export default route;
 

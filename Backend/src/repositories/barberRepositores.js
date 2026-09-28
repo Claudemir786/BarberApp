@@ -259,6 +259,21 @@ export async function getBarbershopByName(barbershopName) {
     }
 }
 
+export async function getDataBarbershopUser(userId){
+    try {
+
+        const [result] = await POOL.query(`SELECT * FROM barbershops WHERE user_id = ?`, [userId]);
+
+    if(result.length === 0 )throw new Error("Não foram encontrados dados de barbearia cadastrada desse usuário");
+
+    return result[0]
+        
+    } catch (error) {
+        console.error("falha ao buscar dados da barbearia na base de dados: ", error);
+        return false
+    }
+    
+}
 
 
 //faz a logica de verificar os horarios marcados e retornar os livres;
@@ -302,6 +317,7 @@ const  freeTimes = async(date,time,barbershop_id)=>{
     }
 
 }
+
 
 //verifica se o dia escolhido da semana é em um final de semana
 const checkWeekend = async(date)=>{

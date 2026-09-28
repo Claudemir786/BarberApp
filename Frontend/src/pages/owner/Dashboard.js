@@ -1,10 +1,36 @@
 import { View,Text, TouchableOpacity,ScrollView,StyleSheet} from "react-native";
 import Logo from "../../components/Logo";
 import Feather from '@expo/vector-icons/Feather';
+import ButtonDefault from "../../components/Button";
+import { useEffect, useState } from "react";
+import { infoUserBarbershop } from "../../service/BarbeshopService";
+import { GetUserBarbershop } from "../../service/SecureStore";
 
 
 
 export default function Dashboard({navigation}){
+
+    const [nameBarbershop,setNameBarbershop] = useState("");
+
+    useEffect(()=>{
+        getInfo();
+    },[])
+
+    async function getInfo(){
+        try {
+
+            const result = await infoUserBarbershop();
+
+            if(result){
+                console.log("dados chegaram na pagina com sucesso");
+                const name = await GetUserBarbershop();
+                setNameBarbershop(name.name);
+            }   
+            
+        } catch (error) {
+            console.error("Falha ao buscar dados");
+        }
+    }
 
     return(
         <View style={styles.container}>
@@ -16,7 +42,7 @@ export default function Dashboard({navigation}){
 
             <View style={styles.header}>
                 <Text style={styles.hello}>Olá</Text>
-                <Text style={styles.title}>Barbearia Exemple</Text>
+                <Text style={styles.title}>{nameBarbershop}</Text>
             </View>
 
             {/*Corpo da pogina*/}
@@ -25,7 +51,10 @@ export default function Dashboard({navigation}){
                 {/*Primeira Linha*/}
                 <View style={styles.line}>
                     {/*Card 1 */}
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity
+                    onPress={()=>navigation.navigate("Agenda")}
+                    style={styles.button}
+                    >
                         <View style={styles.icon}>
                             {/*Icone */}
                             <Feather name="calendar" size={24} color="#D4AF37" />
@@ -35,7 +64,10 @@ export default function Dashboard({navigation}){
                         
                     </TouchableOpacity>
                     {/*Card 2 */}
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity 
+                    onPress={()=> navigation.navigate("Equipe")}
+                    style={styles.button}
+                    >
                         <View style={styles.icon}>
                             {/*Icone */}
                             <Feather name="users" size={24} color="#D4AF37" />
@@ -49,7 +81,10 @@ export default function Dashboard({navigation}){
                 {/*Segunda Linha*/}
                 <View style={styles.line}>
                      {/*Card 1 */}
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity 
+                    onPress={()=>navigation.navigate("Clientes")}
+                    style={styles.button}
+                    >
                         <View style={styles.icon}>
                             {/*Icone busca*/}
                             <Feather name="search" size={24} color="#D4AF37" />
@@ -59,7 +94,10 @@ export default function Dashboard({navigation}){
                         
                     </TouchableOpacity>
                     {/*Card 2 */}
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity 
+                    onPress={()=>navigation.navigate("Barbearia")}
+                    style={styles.button}
+                    >
                         <View style={styles.icon}>
                             {/*Icone engrenagem*/}
                             <Feather name="settings" size={24} color="#D4AF37" />
@@ -69,6 +107,7 @@ export default function Dashboard({navigation}){
 
                     </TouchableOpacity>
                 </View>
+                <ButtonDefault title="Cadastrar serviços" textColor="#fff" color="#D4AF37" onpress={()=>navigation.navigate("Rservice")}/>
             </View>
         </View>
     )

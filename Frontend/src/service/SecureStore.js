@@ -32,12 +32,26 @@ export async function GetInfoUser(){
 
 }
 
+//guar true ou false dependendo do tipo de usuário
 export async function SetIsOwner(owner) {
     await SecureStore.setItemAsync("owner",String(owner));
 }
 
 export async function GetIsOwer(){
     return await SecureStore.getItemAsync("owner")
+}
+
+export async function SetUserBarbershop(id,name){
+    await SecureStore.setItemAsync("nameBarbershop", name);
+    await SecureStore.setItemAsync("idBarbershop", String(id));
+
+}
+
+
+export async function GetUserBarbershop(){
+    const name = await SecureStore.getItemAsync("nameBarbershop");
+    const id = await SecureStore.getItemAsync("idBarbershop");
+    return{name,id}
 }
 
 export async function ClearUserData(){

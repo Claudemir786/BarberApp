@@ -1,6 +1,6 @@
 
 import options from "./ConfigRequest";
-import { GetToken, SetReloadPageForAppointments } from "./SecureStore";
+import { GetToken, GetUserBarbershop, SetReloadPageForAppointments, SetUserBarbershop } from "./SecureStore";
 
 const URL = "http://192.168.3.43:3000/api/";
 
@@ -156,7 +156,33 @@ export async function registerBussinessHour(barberShopId,weekdayOpen,weekdayClos
     }
 }
 
+export async function infoUserBarbershop(profile) {
+    try {
+        
+        const res = await fetch(`${URL}info/barbershop`, await options("GET"));
 
+        if(!res.ok)throw new Error("Falha ao retornar dados da API");
+
+        const user = await res.json();
+
+        if(profile){
+            return user.barbershop;
+
+        }else{
+
+             await SetUserBarbershop(user.barbershop.id, user.barbershop.name);
+             return true;
+        }
+
+       
+
+       
+
+    } catch (error) {
+        console.error("falha ao buscar dados: ", error);
+        return false;
+    }
+}
 
 
  //deixa os horarios no padrão correto para enviar para o banco

@@ -159,28 +159,38 @@ export async function registerBussinessHour(barberShopId,weekdayOpen,weekdayClos
 export async function infoUserBarbershop(profile) {
     try {
         
-        const res = await fetch(`${URL}info/barbershop`, await options("GET"));
+        const res = await fetch(`${URL}barbershop/info`, await options("GET"));
 
         if(!res.ok)throw new Error("Falha ao retornar dados da API");
 
         const user = await res.json();
 
         if(profile){
-            return user.barbershop;
+            return user.barbershop[0];
 
         }else{
 
-             await SetUserBarbershop(user.barbershop.id, user.barbershop.name);
+             await SetUserBarbershop(user.barbershop[0].id, user.barbershop[0].name);
              return true;
         }
-
-       
-
-       
 
     } catch (error) {
         console.error("falha ao buscar dados: ", error);
         return false;
+    }
+}
+
+export async function registerServiceBarbershop(barbershopId,title,minutes,price){
+    try {
+        console.log("preço enviado: ", price);
+        const res = await fetch(`${URL}create/service`, await options("POST", {barbershopId,title,minutes,price}));
+
+        if(!res.ok)throw new Error("não foi possivel registrar novo serviço");
+
+        return true;
+        
+    } catch (error) {
+        console.error("Não foi possível registrar esse serviço: ", error);
     }
 }
 

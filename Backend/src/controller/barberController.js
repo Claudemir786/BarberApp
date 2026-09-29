@@ -1,4 +1,4 @@
-import { createBusinessHour, getAvailableServices, getAvailableTimes, getBarbershopByName, getDataBarbershopUser, getInfo, getInfoBarbershop, getLocationBarberShop, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
+import { createBusinessHour, createService, getAvailableServices, getAvailableTimes, getBarbershopByName, getDataBarbershopUser, getInfo, getInfoBarbershop, getLocationBarberShop, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -174,17 +174,8 @@ export class BarberShop{
     //recebe o id do usuário proprietario
     async getBarbershop(req,res){
       try {
-        if(req.query){
-          const {barbershopId} = req.query;
-
-          if(!barbershopId)return messageError(res,401,"dados foram enviados incorretamente")
-          
-          const result = await getInfoBarbershop("",barbershopId)
-          if(!result)throw new Error("Repositories retornou falso ao buscar informações da barbearia");
-
-          return res.status(200).json({success:true, barbershop:result});
-        }
-        //futuramente será o id do usuário
+       
+        
         const id = req.user.id;
 
         const result = await getInfoBarbershop(id);
@@ -323,5 +314,31 @@ export class BarberShop{
         return messageError(res,400,"Não foi possível retornar dados da barbearia do usuário");
       }
       
+    }
+
+    async createServiceBarbershop(req,res){
+      try {
+
+       if(!req.body){
+        return messageError(res,401,"dados não foram enviados na requisição")
+       } 
+        const {barbershopId,title,minutes,price} = req.body;
+
+        if(!barbershopId || !title || !minutes || !price)return messageError(res,401,"dados enviados incorretamente");
+
+        
+        const correctMinutes = parseInt(minutes);
+        const correctPrice = parseFloat(price);
+
+        const create = await createService(barbershopId,title,correctMinutes,correctPrice);
+
+        if(!create)throw new Error("falha na conexão com o banco e criação de novo serviço");
+
+        return res.status(201).json({success:true, message:"serviço registrado com sucesso!"});
+        
+      } catch (error) {
+        console.error("Erro ao registrar novo serviço na barbearia: ", error);
+        return messageError(res,400,"não foi possível registrar o serviço")
+      }
     }
 }

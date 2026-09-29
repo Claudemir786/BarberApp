@@ -19,8 +19,6 @@ route.get("/api/test", (req,res)=>{
 route.get("/api/islogged", authHeader, user.isLogged)
 //barbearias da região
 route.get("/api/barbershop/location", authHeader, barber.location);
-//retorna os dados da barbearia do usuário dono
-route.get("/api/info/barbershop", authHeader, barber.getBarbshopByUserId);
 //retorna dias e horarios de funcionamento
 route.get("/api/barbershop/info/businesshour", authHeader, barber.infoBusinessHours);
 //retorna os horarios disponiveis no dia selecionado
@@ -55,6 +53,8 @@ route.post("/api/create/user", user.create);
 route.post("/api/update/email", authHeader, user.updateEmail);
 //altera a senha do usuário
 route.post("/api/update/password", authHeader, user.updatePassword);
+//registra um novo serviço
+route.post("/api/create/service", authHeader, barber.createServiceBarbershop)
 //registra o agendamento
 route.post("/api/scheduling", authHeader, user.scheduling);
 //cadastra uma barbearia

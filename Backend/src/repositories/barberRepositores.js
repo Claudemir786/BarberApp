@@ -275,6 +275,23 @@ export async function getDataBarbershopUser(userId){
     
 }
 
+export async function createService(barbershopId,title,minutes,price){
+    
+    try {
+
+        const [result] = await POOL.query(`INSERT INTO services (barbershop_id,title,duration_minutes,price)
+                                            VALUES(?,?,?,?)`, [barbershopId,title,minutes,price]);
+
+        if(result.affectedRows === 0 )throw new Error("Inserção no banco de dados falhou");
+        
+        return true;
+        
+    } catch (error) {
+        console.error("falaha ao cadastrar um serviço na barbearia: ", error);
+        return false
+    }
+}
+
 
 //faz a logica de verificar os horarios marcados e retornar os livres;
 const  freeTimes = async(date,time,barbershop_id)=>{

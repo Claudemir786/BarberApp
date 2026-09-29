@@ -4,6 +4,7 @@ import InputDefault from "../../components/Input";
 import ButtonDefault from "../../components/Button";
 import { useEffect, useState } from "react";
 import { GetUserBarbershop } from "../../service/SecureStore";
+import { registerServiceBarbershop } from "../../service/BarbeshopService";
 
 
 export default function RegisterService({navigation}){
@@ -11,6 +12,11 @@ export default function RegisterService({navigation}){
     const [pressButton,setPressButton] = useState(false);
     const [pressButonTwo,setPressButtonTwo] = useState(false);
     const [idBarbershop,setIdBarbershop] = useState("");
+    const [title,setTitle] = useState("");
+    const [minutes,setMinutes] = useState("");
+    const [price,setPrice] = useState("");
+
+
     useEffect(()=>{
         getId();
     },[])
@@ -28,6 +34,26 @@ export default function RegisterService({navigation}){
         }
     }
 
+    async function handleService(){
+        try {
+
+            const createService = await registerServiceBarbershop(idBarbershop,title,minutes,price)
+
+            if(createService){
+                
+                console.log("serviço adicionado com sucesso");
+                alert("serviço adicionado com sucesso");
+                navigation.goBack();
+
+            }else{
+                console.warn("dados não foram adicionados com sucesso")
+            }
+
+        } catch (error) {
+            console.error("Erro ao cadastrar serviço")
+        }
+    }
+
 
     return(
         <View style={styles.container}>
@@ -39,7 +65,7 @@ export default function RegisterService({navigation}){
 
             <View style={styles.body}>
                 <Text style={styles.title}>Cadastre um novo serviço</Text>                    
-                <InputDefault label="Nome"/>
+                <InputDefault label="Nome" onChange={setTitle}/>
 
                 <View style={styles.field}>
                     <Text  style={styles.label}>Duração min</Text>
@@ -52,6 +78,7 @@ export default function RegisterService({navigation}){
                          onPress={()=>{
                             setPressButton(true)
                             setPressButtonTwo(false)
+                            setMinutes("30")
                         }}
                           style={pressButton ? styles.buttonPress : styles.button}
                         >
@@ -62,6 +89,7 @@ export default function RegisterService({navigation}){
                           onPress={()=>{
                             setPressButtonTwo(true)
                             setPressButton(false)
+                            setMinutes("60")
                         }}
                           style={pressButonTwo ? styles.buttonPress : styles.button}
                         >
@@ -78,11 +106,12 @@ export default function RegisterService({navigation}){
                     <TextInput
                         style={styles.input}
                         keyboardType="decimal-pad"
+                        onChangeText={setPrice}
                     />
                 </View>
               
                 <View style={{marginTop:'15%'}}></View>
-                <ButtonDefault title="Cadastrar"/>
+                <ButtonDefault title="Cadastrar" onpress={handleService}/>
             </View>
         
             

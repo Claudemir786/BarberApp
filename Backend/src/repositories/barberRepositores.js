@@ -292,6 +292,38 @@ export async function createService(barbershopId,title,minutes,price){
     }
 }
 
+export async function listApointmentsByDate(barbershopId,date){
+
+    try {
+
+        const [result] = await POOL.query(`SELECT
+                                            a.id,
+                                            a.appointment_date,
+                                            a.appointment_time,
+                                            a.status,
+                                            c.name AS barber,
+                                            s.title AS service_name,
+                                            s.price AS price
+                                        
+                                        FROM appointments a
+                                        JOIN services s ON a.service_id = s.id
+                                        JOIN barbers c ON a.barber_id = c.id 
+                                        WHERE a.barbershop_id = ?
+                                        AND a.appointment_date = ?
+                                        AND a.status IN ('pending', 'confirmed')
+                                        `, [barbershopId,date])
+        
+        if(result.length === 0)throw new Error("não foram encontrados agendamentos com a data enviada");
+       
+        return result;
+
+    } catch (error) {
+        console.error("falha ao buscar agendamentos na base de dados: ", error);
+        return false
+    }
+
+}
+
 
 //faz a logica de verificar os horarios marcados e retornar os livres;
 const  freeTimes = async(date,time,barbershop_id)=>{

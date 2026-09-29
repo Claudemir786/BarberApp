@@ -1,4 +1,4 @@
-import { createBusinessHour, createService, getAvailableServices, getAvailableTimes, getBarbershopByName, getDataBarbershopUser, getInfo, getInfoBarbershop, getLocationBarberShop, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
+import { createBusinessHour, createService, getAvailableServices, getAvailableTimes, getBarbershopByName, getDataBarbershopUser, getInfo, getInfoBarbershop, getLocationBarberShop, listApointmentsByDate, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -297,21 +297,38 @@ export class BarberShop{
       }
     }
 
-    async getBarbshopByUserId(req,res){
+    async getAppointmentsByDate(req,res){
       try {
 
-        const userid = req.user.id;
+        /*const barbershopId = req.query.barberhopId;
+        const date = req.query.date;*/
+        const{barbershopId, date} = req.query;
+        console.log(req.query);
 
-        const result = await getDataBarbershopUser(userid);
-
-        if(!result)throw new Error("Não foram encontrados dados desse usuário");
-
-        return res.status(200).json({success:true, barbershop:result})
+        if(!barbershopId || !date)return messageError(res,401,"dados enviados incorretamente");
         
+        let formattedDate = date;
+
+        if(typeof formattedDate === "object"){
+
+          formattedDate = date.toISOString().split("T")[0];
+
+        }else if(formattedDate.length > 10){
+          formattedDate = formattedDate.split("T")[0];
+        }
+
+        const listAppointments = await listApointmentsByDate(barbershopId,formattedDate);
+        
+
+        if(!listAppointments)throw new Error("Não foram encontrados agendamentos");
+
+        return res.status(200).json({success:true, appointments:listAppointments});
+
+
         
       } catch (error) {
-        console.error("falha ao retornar dados da barbearia do usuário: ", error);
-        return messageError(res,400,"Não foi possível retornar dados da barbearia do usuário");
+        console.error("falha ao retornar agendamentos: ", error);
+        return messageError(res,400,"Não foi possível retornar lista de agendamentos de acordo com a data enviada");
       }
       
     }

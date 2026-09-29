@@ -1,4 +1,5 @@
 
+import Appointments from "../pages/Appointments";
 import options from "./ConfigRequest";
 import { GetToken, GetUserBarbershop, SetReloadPageForAppointments, SetUserBarbershop } from "./SecureStore";
 
@@ -194,6 +195,24 @@ export async function registerServiceBarbershop(barbershopId,title,minutes,price
     }
 }
 
+export async function readAppointmentsBydate(barbershopId,date){
+    console.log("dados recebidos: ", barbershopId,date);
+    try {
+
+        const res = await fetch(`${URL}appointments/day?barbershopId=${barbershopId}&date=${date}`, await options("GET"));
+
+        if(!res.ok)throw new Error("Dados não retornaram corretamente da API");
+
+        const appointments = await res.json();
+
+        return appointments.appointments;
+        
+    } catch (error) {
+        console.error("Falha ao retornar dados de agendamentos: ", error);
+        return false
+    }
+
+} 
 
  //deixa os horarios no padrão correto para enviar para o banco
     function alterHours(date){

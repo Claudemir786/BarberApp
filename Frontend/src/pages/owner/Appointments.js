@@ -2,13 +2,57 @@ import { Text, View,ScrollView,StyleSheet, TouchableOpacity, Modal} from "react-
 import Logo from "../../components/Logo";
 import Feather from '@expo/vector-icons/Feather';
 import { Calendar } from 'react-native-calendars';
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { readAppointmentsBydate } from "../../service/BarbeshopService";
+import { GetUserBarbershop } from "../../service/SecureStore";
 
 
 export default function OwnerAppointments({navigation}){
 
      const [selectedDate, setSelectedDate] = useState(null);
      const [calendar,setCalendar] = useState(false);
+     const [appointments,setAppointments] = useState([]);
+     const [findded,setFindded] = useState(true);
+
+     useEffect(()=>{
+        let todayDate = new Date();
+        handleAppointments(todayDate);;
+     },[])
+
+     useEffect(()=>{
+        handleAppointments()
+
+     },[selectedDate])
+
+     async function handleAppointments(today){
+        try {
+            let result = [];
+            let barbershopId = await GetUserBarbershop();
+
+            if(today){
+
+                const formattedDate = today.toISOString().split("T")[0];
+                result = await readAppointmentsBydate(barbershopId.id,formattedDate);
+
+            }else{               
+                result = await readAppointmentsBydate(barbershopId.id, selectedDate);                                
+                
+            }
+
+            if(result.length > 0){
+                setAppointments(result);
+                console.log("resultados da busca: ", result);
+
+            }else{
+                console.error("dados não chegaram na página");
+                setFindded(true);
+            }
+             
+            
+        } catch (error) {
+            console.error("Erro ao retornar os dados de agendamentos do dia");
+        }
+     }
 
     //calendario
     function CalendarScreen(){
@@ -30,6 +74,8 @@ export default function OwnerAppointments({navigation}){
             />
         )
     }
+
+
 
     return(
         <View style={styles.container}>
@@ -161,7 +207,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#D4AF37',
     flexDirection:'row',
     borderRadius:10,
-    height:30,
+    height:35,
     alignItems:'center',
     alignSelf:'center',
     padding:10,

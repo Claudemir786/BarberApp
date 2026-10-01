@@ -1,46 +1,54 @@
 import { StyleSheet, Text,View } from "react-native";
-import HeaderLogo from "../../components/Header";
+
 import Feather from '@expo/vector-icons/Feather';
 
 
-export default function ListAppointments({navigation}) {
- 
- 
+export default function ListAppointments({appointment}) {
+
+
+    
+        //divide a data em 3
+    const [year, month, day] = appointment?.appointment_date.split("-") || [];
+    
+    //dividi a hoa recebida em 3 também
+
+    const [hour, minute, second] = appointment?.appointment_time.split(":") || [];
+    
+    
+
     return (
         <View style={styles.container}>
 
-            <HeaderLogo/>
-
-            <View style={{marginTop:'10%'}}></View>
-
+           
            {/*Agendamentos*/}
-            <View style={styles.appointment}>
+            <View style={styles.appointmentS}>
 
                 {/*horarios*/}
                 <View style={styles.hour}>
                     <Feather name="clock" size={20} color="#D4AF37" />
-                    <Text style={styles.textHour}>09:00</Text>
+                    <Text style={styles.textHour}>{hour}:{minute}</Text>
                 </View>
                 <View style={{borderLeftWidth:1,borderColor:'#ffffff2d', width:'90%'}}>
                     {/*nome do cliente e status*/}
                     <View style={styles.nameStatus}>
-                        <Text style={styles.name}>Pedro Almeida</Text>
+                        <Text style={styles.name}>{appointment?.customer}</Text>
                         <View>
-                            <Text style={styles.status}>10/05/2026</Text>
+                            <Text style={styles.status}>{day[0]}{day[1]}/{month}/{year}</Text>
                         </View>
                         
                         
                     </View>
                     {/*corte e preço*/}
                     <View style={styles.service}>
-                        <Text style={styles.textService}>Corte Clássico  - Carlos Mendes</Text>
-                        <Text style={styles.price}>R$ 35</Text>
+                        <Text style={styles.textService}>{appointment?.service_name} - {appointment?.barber}</Text>
+                        <Text style={styles.price}>R$ {appointment?.price.split(".")[0]},00</Text>
                     </View>
 
                 </View>                    
                 
             
             </View>
+            
         </View>
     )
 }
@@ -50,7 +58,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#000',
         flex:1
     },
-    appointment:{
+    appointmentS:{
         flexDirection:'row',
         width:'90%',
         alignSelf:'center',

@@ -6,6 +6,7 @@ import Appointments from './src/pages/Appointments';
 import Profile from './src/pages/Profile';
 import Barbershop from './src/pages/barbershop';
 import RegisterService from './src/pages/owner/RegisterService';
+import ListAppointments from './src/components/ListAppointments';
 
 
 

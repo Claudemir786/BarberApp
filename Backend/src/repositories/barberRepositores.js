@@ -303,11 +303,13 @@ export async function listApointmentsByDate(barbershopId,date){
                                             a.status,
                                             c.name AS barber,
                                             s.title AS service_name,
-                                            s.price AS price
+                                            s.price AS price,
+                                            u.name AS customer
                                         
                                         FROM appointments a
                                         JOIN services s ON a.service_id = s.id
                                         JOIN barbers c ON a.barber_id = c.id 
+                                        JOIN users u ON a.customer_id = u.id
                                         WHERE a.barbershop_id = ?
                                         AND a.appointment_date = ?
                                         AND a.status IN ('pending', 'confirmed')

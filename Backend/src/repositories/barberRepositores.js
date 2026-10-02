@@ -229,10 +229,12 @@ export async function readBarber(barbershopId){
 
 export async function postCreateBarber(barbershopId,name){
     try {
+
+       // console.log("id recebido: ", barbershopId)
         
         const [result] = await POOL.query(`INSERT INTO barbers (barbershop_id,name)VALUES(?,?)`, [barbershopId,name]);
 
-        if(result.affectedRows === 0)throw new Error("falha ao kcriar novo barbeiro no banco de dados");
+        if(result.affectedRows === 0)throw new Error("falha ao criar novo barbeiro no banco de dados");
 
         return true;
 
@@ -326,6 +328,63 @@ export async function listApointmentsByDate(barbershopId,date){
 
 }
 
+export async function selectCustomerByName(barbershopId,customer){
+    try {
+        
+        const [result] = await POOL.query(`SELECT DISTINCT
+                                            u.id,
+                                            u.name,
+                                            u.phone,
+                                            s.id AS barbershop_id
+                                            FROM users u
+                                            JOIN appointments a 
+                                            ON a.customer_id = u.id
+                                            JOIN barbershops s 
+                                            ON a.barbershop_id = s.id
+                                            WHERE s.id = ?
+                                            AND u.name = ?; `, [barbershopId,customer]);
+
+        
+        if(result.length === 0)throw new Error("Não foram encontrados dados para esse nome de clientes");
+
+        return result;
+        
+    } catch (error) {
+        console.error("Erro ao retornar os dados da busca: ", error);
+        return false;
+    }
+}
+
+export async function historyAppointmentsUserBabershop(customerId,barbershopId){
+    try {
+
+        const [result] = await POOL.query(`SELECT
+                                            a.id,
+                                            a.appointment_date,
+                                            a.appointment_time,
+                                            a.status,
+                                            c.name AS barber,
+                                            s.title AS service_name,
+                                            s.price AS price,
+                                            u.name AS customer
+
+                                        FROM appointments a
+                                        JOIN services s ON a.service_id = s.id
+                                        JOIN barbers c ON a.barber_id = c.id 
+                                        JOIN users u ON a.customer_id = u.id
+                                        WHERE a.barbershop_id = ?
+                                        AND a.customer_id = ?`,[barbershopId,customerId]);
+
+        if(result.length === 0)throw new Error("não foram encontrados agendamentos na base de dados");
+        
+        return result;
+
+        
+    } catch (error) {
+        console.error("Erro ao encontrar dados :", error);
+        return false;
+    }   
+}
 
 //faz a logica de verificar os horarios marcados e retornar os livres;
 const  freeTimes = async(date,time,barbershop_id)=>{

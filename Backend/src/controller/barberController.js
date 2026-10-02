@@ -1,4 +1,4 @@
-import { createBusinessHour, createService, getAvailableServices, getAvailableTimes, getBarbershopByName, getDataBarbershopUser, getInfo, getInfoBarbershop, getLocationBarberShop, listApointmentsByDate, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber } from "../repositories/barberRepositores.js";
+import { createBusinessHour, createService, getAvailableServices, getAvailableTimes, getBarbershopByName, getDataBarbershopUser, getInfo, getInfoBarbershop, getLocationBarberShop, historyAppointmentsUserBabershop, listApointmentsByDate, postCreateBabershop, postCreateBarber, putCancelAppointment, putUpdateBarbershop, putUpdateBusinessHour, readBarber, selectCustomerByName } from "../repositories/barberRepositores.js";
 import { messageError, messageSuccess } from "../util/message.js";
 
 
@@ -261,6 +261,7 @@ export class BarberShop{
       try {
 
         const {barbershopId,name} = req.body;
+        //console.log("dados que chegaram: ", barbershopId,"nome: ",name)
 
         if(!barbershopId || !name)messageError(res,401,"dados não foram enviados corretamente");
 
@@ -358,4 +359,42 @@ export class BarberShop{
         return messageError(res,400,"não foi possível registrar o serviço")
       }
     }
+
+    async searchCustomer(req,res){
+      try {
+        console.log(req.query)
+
+        const {barbershopId,customer} = req.query;
+
+        if(!barbershopId || !customer)return messageError(res,401,"dados enviados incorretamente");
+
+        const found = await selectCustomerByName(barbershopId,customer);
+        if(!found)throw new Error("Repositories retornou false dados não foram encontrados")
+
+        return res.status(200).json({success:true,customers:found});
+        
+      } catch (error) {
+        console.error("Erro ao buscar clientes com o nome enviado: ", error);
+        return messageError(res,401,"Falha ao encontrar clientes pelo nome enviado");
+      }
+    }
+    
+   async historyAppointmentsUserFromBarbershop(req,res){
+      try {
+
+        const {customerId,barbershopId} = req.query;
+
+        if(!customerId || !barbershopId)return messageError(res,401,"dados enviados incorretamente");
+
+        const list = await historyAppointmentsUserBabershop(customerId,barbershopId);
+
+        if(!list)throw new Error("Repositories retornou false não foram encontrados agendamentos");
+
+        return res.status(200).json({success:true, appointments:list});
+        
+      } catch (error) {
+        console.error("não foi possível retornar os agendamentos: ", error);
+        return messageError(res,400,"falha ao retornar histórico de agendamentos")
+      }
+   }
 }

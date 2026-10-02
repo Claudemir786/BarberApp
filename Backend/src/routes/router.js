@@ -33,12 +33,16 @@ route.get("/api/user/appointments", authHeader, user.userAppointments);
 route.get("/api/user/info", authHeader, user.userInfo);
 //retorna histórico de agendamentos antigo
 route.get("/api/user/appointment/history", authHeader, user.userAppointmentsHistory);
+//retorna his´torico de agendamentos de acordo com o id do usuário e id da barbearia;
+route.get("/api/barbershop/history/appointments/client", authHeader, barber.historyAppointmentsUserFromBarbershop);
 //busca os barbeiros cadastrados
 route.get("/api/barber", authHeader, barber.getBarber);
 //busca a barbearia por nome
 route.get("/api/search/barbershop", authHeader, barber.searchBarbershop);
 //retorna os agendamentos do dia de hoje ou do dia selecionado por meio do id da barbearia e data
 route.get("/api/appointments/day", authHeader, barber.getAppointmentsByDate);
+//busca e retorna clientes da barbearia por nome
+route.get("/api/search/costumer", authHeader, barber.searchCustomer )
 //cancela o agendamento
 route.put("/api/cancel/appointment", authHeader, barber.cancelAppointment);
 //faz o update de dados padrão da barbearia

@@ -213,6 +213,74 @@ export async function readAppointmentsBydate(barbershopId,date){
     }
 
 } 
+export async function getBarbersBarbershop(){
+    try {
+        const barbershopId = await GetUserBarbershop();
+
+        const res = await fetch(`${URL}barber?barbershopId=${barbershopId.id}`, await options("GET"));
+
+        if(!res.ok)throw new Error("Falha ao retornar dados da Api");
+        const barbers = await res.json();
+
+        return barbers.barbers;
+        
+    } catch (error) {
+        console.error("Falha ao retornar barbeiros cadastrados na base de dados: ", error);
+        return false;
+    }
+}
+
+export async function registerBarberBarbershop(name){
+    try {
+
+        const barbershopId = await GetUserBarbershop();
+        
+        const res = await fetch(`${URL}create/barber`, await options("POST",{barbershopId:barbershopId.id,name}))
+
+        if(!res.ok)throw new Error("Não foi possível concluir o cadastro na API");
+
+        return true;
+
+    } catch (error) {
+        console.error("Falha ao registrar novo barbeiro: ", error);
+        return false;
+    }
+
+}
+
+export async function searchCustomerByName(name){
+
+    try {
+
+        const infoBarbershop = await GetUserBarbershop();
+
+        const res = await fetch(`${URL}search/costumer?barbershopId=${infoBarbershop.id}&customer=${name}`, await options("GET"));
+
+        if(!res.ok)throw new Error("Dados não retornaram da API");
+
+        const customers = await res.json();
+
+        return customers.customers;
+        
+    } catch (error) {
+        console.error("Erro ao buscar clientes com o nome enviado: ", error);
+        return false;
+    }
+}
+
+//retornar o histórico de agendamentos com base no id do cliente e id da barbearia
+export async function readHistotyAppointmentsByuserId(userId){
+    try {
+
+        const res = await fetch(`${URL}`)
+        
+    } catch (error) {
+        console.error("Falha ao retornar histórico de agendamento");
+        return false;
+    }
+
+
+}
 
  //deixa os horarios no padrão correto para enviar para o banco
     function alterHours(date){

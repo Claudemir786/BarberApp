@@ -2,9 +2,10 @@ import { View,Text, TouchableOpacity,ScrollView,StyleSheet} from "react-native";
 import Logo from "../../components/Logo";
 import Feather from '@expo/vector-icons/Feather';
 import ButtonDefault from "../../components/Button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { infoUserBarbershop } from "../../service/BarbeshopService";
 import { GetUserBarbershop } from "../../service/SecureStore";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 
@@ -12,9 +13,11 @@ export default function Dashboard({navigation}){
 
     const [nameBarbershop,setNameBarbershop] = useState("");
 
-    useEffect(()=>{
-        getInfo();
-    },[])
+    useFocusEffect(
+        useCallback(()=>{
+             getInfo();
+        },[])
+    )
 
     async function getInfo(){
         try {

@@ -6,20 +6,25 @@ import { useState, useEffect } from "react";
 import { getCities, getStates } from "../../util/connIBGEapi";
 import {Picker} from '@react-native-picker/picker'
 import Feather from '@expo/vector-icons/Feather';
+import Load from "../../components/Load";
+import { changeDataBarbershop, infoUserBarbershop } from "../../service/BarbeshopService";
+import { GetInfoUser, GetUserBarbershop } from "../../service/SecureStore";
 
 
 export default function Settings({navigation}) {
   
-    const [phone,setPhone] = useState("123456")
-    const [name,setName] = useState("default")
-    const [address, setAddress] = useState("default")    
+    const [phone,setPhone] = useState("")
+    const [name,setName] = useState("")
+    const [address, setAddress] = useState("")    
     const [cities,setCities] = useState([]);
-    const [city,setCity] = useState("dafault");
+    const [city,setCity] = useState("");
     const [states,setStates] = useState([]);
-    const [state,setState] = useState("default");
+    const [state,setState] = useState("Estado");
+    const [load,setLoad] = useState(false);
 
     useEffect(()=>{
         loadStates()
+        infoBarbershop();
     },[])
 
     useEffect(()=>{
@@ -52,6 +57,62 @@ export default function Settings({navigation}) {
         }
     }
 
+    //busca as informções da barbearia
+    async function infoBarbershop(){
+        try {
+            setLoad(true);
+            const getInfoBarbershop = await infoUserBarbershop(true);
+
+            if(getInfoBarbershop){
+                setName(getInfoBarbershop.name);
+                setAddress(getInfoBarbershop.address);
+                setPhone(getInfoBarbershop.contact_phone);
+                setCity(getInfoBarbershop.city);
+                console.log("informações da barbearia foram carregadas com sucesso: ", getInfoBarbershop);
+                
+
+            }else{
+                console.warn("dados da barbearia não foram carregados");
+            }
+            setLoad(false);
+        } catch (error) {
+            console.error("Falha ao buscar dados da barbaria: ", error);
+            setLoad(false);
+        }
+    }
+
+    //envia as alterações feitas
+    async function handleChangeDataBarbershop(){
+        try {
+            setLoad(true);
+            const result = await changeDataBarbershop(name,address,phone,city);
+
+            if(result){
+                console.log("dados da barbearia foram alterados com sucesso!!");
+                alert("dados da barbearia foram alterados com sucesso")
+                await infoBarbershop();
+                navigation.navigate("Inicio");
+            }else{
+                console.warn("não foi possível alterar dados da barbearia");
+            }
+            setLoad(false);
+            
+        } catch (error) {
+            console.error("Falha ao alterar dados da barbearia: ", error);
+             setLoad(false);
+        }
+    }
+
+    async function handleChangeHours(){
+        try {
+            const id = await GetUserBarbershop()
+            navigation.navigate("BusinessHours", {id:id.id})
+            
+        } catch (error) {
+            console.error("falha ao chamar pagina de informações de funcionamento")
+        }
+    }
+
     return (
     <View style={styles.container}>
         <HeaderLogo/>
@@ -63,7 +124,7 @@ export default function Settings({navigation}) {
             <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
                 <TouchableOpacity 
                 style={styles.buttonHour}
-
+                onPress={handleChangeHours}
                 >  
                 <View>
                     <Feather name="clock" size={18} color="#fff" />
@@ -72,17 +133,24 @@ export default function Settings({navigation}) {
                 </TouchableOpacity>
             </View>
 
+            {load &&(
+                <>
+                    <Load/>
+                </>
+                
+            )}
+
             {/*nome, endereço,telefone ,estado, cidade */}
             <View>
-                <InputDefault label="Nome da barbearia" placeholder={name}/>
-                <InputDefault label="Endereço" placeholder={address}/>
+                <InputDefault label="Nome da barbearia" placeholder={name} onChange={setName}/>
+                <InputDefault label="Endereço" placeholder={address} onChange={setAddress}/>
                 {/*telefone de contato*/}
                 <Text style={styles.label}>Telefone para contato</Text>
                 <View>
                     <TextInput
-                        placeholder=""
+                        placeholder={phone}
                         keyboardType="numeric"
-                        value={phone}
+                        placeholderTextColor={"#797377"}
                         onChangeText={(text) => {
                             setPhone(text.replace(/[^0-9]/g, ""));
                         }}
@@ -139,8 +207,10 @@ export default function Settings({navigation}) {
 
                 </Picker>
             </View>  
+            {!load&&(
+                <ButtonDefault title="Salvar alterações" onpress={handleChangeDataBarbershop}/>
+            )}
             
-            <ButtonDefault title="Salavar alterações"/>
             <View style={{marginBottom:'15%'}}></View>
 
         </ScrollView>
@@ -198,7 +268,8 @@ const styles = StyleSheet.create({
         marginBottom:'2%'
     },
     viewPicker:{
-        marginBottom:'10%'
+        marginBottom:'10%',
+       
     },
     picker:{
         color:"#fff",

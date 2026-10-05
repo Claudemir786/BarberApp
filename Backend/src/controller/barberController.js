@@ -174,7 +174,6 @@ export class BarberShop{
     //recebe o id do usuário proprietario
     async getBarbershop(req,res){
       try {
-       
         
         const id = req.user.id;
 
@@ -193,6 +192,7 @@ export class BarberShop{
     //faz alteração dos dados da barberia 
     async updateBarbershop(req,res){
       try {
+        console.log("dados: ", req.body);
 
         const {id,name,address,contact_phone,city} = req.body;
 

@@ -290,6 +290,35 @@ export async function readHistotyAppointmentsByuserId(costumerId){
 
 }
 
+export async function changeDataBarbershop(name,address,contact_phone,city){
+    try {
+
+        const infoBarbershop = await GetUserBarbershop();
+
+        const res = await fetch(`${URL}update/barbershop`, await options(
+            "PUT",
+            {
+                id:infoBarbershop.id,
+                name,
+                address,
+                contact_phone,
+                city
+            }            
+        ));
+
+        const changeComplete = await res.json();
+        if(!res.ok)throw new Error(`Erro: ${changeComplete.message}`);
+        await SetUserBarbershop(infoBarbershop.id,name);
+        console.log(changeComplete.message);
+
+        return true;
+        
+    } catch (error) {
+        console.error("Falha ao alterar dados da barbearia: ", error);
+        return false;
+    }
+}
+
  //deixa os horarios no padrão correto para enviar para o banco
     function alterHours(date){
 

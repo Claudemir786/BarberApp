@@ -358,6 +358,7 @@ export async function selectCustomerByName(barbershopId,customer){
 export async function historyAppointmentsUserBabershop(customerId,barbershopId){
     try {
 
+        console.log("dados antes de buscar no banco: ", customerId,barbershopId)
         const [result] = await POOL.query(`SELECT
                                             a.id,
                                             a.appointment_date,
@@ -377,7 +378,7 @@ export async function historyAppointmentsUserBabershop(customerId,barbershopId){
 
         if(result.length === 0)throw new Error("não foram encontrados agendamentos na base de dados");
         
-        return result;
+        return result; 
 
         
     } catch (error) {

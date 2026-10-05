@@ -115,7 +115,7 @@ export default function OwnerAppointments({navigation}){
                 {/*se não forem encontrados dados de agendamentos mostra a menssagem */}
                 {!findded &&(
                     <>
-                        <NotFound title="Não foram encontrados agensamentos nessa data"/>
+                        <NotFound title="Não foram encontrados agendamentos nessa data"/>
                     </>
                 )}
                 

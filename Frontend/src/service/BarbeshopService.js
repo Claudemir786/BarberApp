@@ -269,10 +269,18 @@ export async function searchCustomerByName(name){
 }
 
 //retornar o histórico de agendamentos com base no id do cliente e id da barbearia
-export async function readHistotyAppointmentsByuserId(userId){
+export async function readHistotyAppointmentsByuserId(costumerId){
     try {
+        
+        const dataBarbershop = await GetUserBarbershop();
 
-        const res = await fetch(`${URL}`)
+        const res = await fetch(`${URL}barbershop/history/appointments/client?costumerId=${costumerId}&barbershopId=${dataBarbershop.id}`, await options("GET"));
+
+        if(!res.ok)throw new Error("Falha ao retornar dados da API");
+
+        const historyAppointments = await res.json();
+        
+        return historyAppointments.appointments;
         
     } catch (error) {
         console.error("Falha ao retornar histórico de agendamento");

@@ -382,11 +382,13 @@ export class BarberShop{
    async historyAppointmentsUserFromBarbershop(req,res){
       try {
 
-        const {customerId,barbershopId} = req.query;
+        console.log("dados que chegaram: ", req.query)
+        const {costumerId,barbershopId} = req.query;  
+       
+        if(!costumerId || !barbershopId)return messageError(res,401,"dados enviados incorretamente");
+        
 
-        if(!customerId || !barbershopId)return messageError(res,401,"dados enviados incorretamente");
-
-        const list = await historyAppointmentsUserBabershop(customerId,barbershopId);
+        const list = await historyAppointmentsUserBabershop(costumerId,barbershopId);
 
         if(!list)throw new Error("Repositories retornou false não foram encontrados agendamentos");
 

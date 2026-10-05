@@ -59,10 +59,11 @@ export default function Clients({navigation}) {
             setLoad(true);
             console.log("Id recebido para exibição de histórico: ",customerId)
 
-            const listAppointments = readHistotyAppointmentsByuserId(customerId);
-
+            const listAppointments = await readHistotyAppointmentsByuserId(customerId);
+            
             if(listAppointments.length > 0){
-               
+                setLoad(false);
+                setHistory(true);
                 console.log("histórico de agendamentos encontrado com sucesso")
                 setAppointmentHistory(listAppointments);
             }else{
@@ -150,13 +151,18 @@ export default function Clients({navigation}) {
             {load &&(
                 <Load/>
             )}
-            <FlatList
-                data={appointmentHistory}
-                keyExtractor={(item)=>item.id}
+            <View style={styles.overlay}>
+                <View style={styles.modal}>
+                      <FlatList
+                        data={appointmentHistory}
+                        keyExtractor={(item)=>item.id}
                 renderItem={({item})=> <ListAppointments appointment={item}/>}
-            />
-            <ButtonDefault title="Voltar" onpress={()=>setHistory(false)}/>
+                    />
 
+                </View>
+
+            </View>
+              <ButtonDefault title="Voltar" onpress={()=>setHistory(false)}/>
         </Modal>
 
 

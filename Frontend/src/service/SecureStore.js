@@ -59,6 +59,8 @@ export async function ClearUserData(){
     await SecureStore.deleteItemAsync("name")
     await SecureStore.deleteItemAsync("email")
     await SecureStore.deleteItemAsync("owner")
+    await SecureStore.deleteItemAsync("nameBarbershop")
+    await SecureStore.deleteItemAsync("idBarbershop")
     
 }
 

@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems:'center',
         borderRadius:10,
-        width:'40%'
+        width:'60%'
     },
     titleCard:{
         color:"#fff",

@@ -22,7 +22,7 @@ export default function Home({navigation}){
     const [findAppointment,setFindAppointment] = useState(true);
     const [findLocactionB,setFindLocationB] = useState(true);
     const [findBarbershop,setFindBarbershop] = useState(false);
-    const [barbershopFinded,setBarbershopFinded] = useState("");
+    const [barbershopFinded,setBarbershopFinded] = useState([]);
     const [barbershopNotFinded,setNotFinded] = useState(false);
     
 
@@ -93,16 +93,18 @@ export default function Home({navigation}){
      async function findBarberShop() {
         try {
             const barbershop = await searchBarbershopByName(searchBarbershop); 
-            
+            console.log("barbearia encontrada: ", barbershop);
             if(barbershop){
-                console.log("barbearia encontrada");
-                if(barbershop.length === 0 ){
-                    setNotFinded(true)
-                }
+              
                 setBarbershopFinded(barbershop)
                 setFindBarbershop(true);
+                setNotFinded(false);
+                
             }else{
                 setNotFinded(true)
+                setFindBarbershop(false);
+                
+                
             }            
             
         } catch (error) {
@@ -152,9 +154,10 @@ export default function Home({navigation}){
                 </View>
                 {/*Renderiza barbearia encontrada */}
                 {findBarbershop &&(
+                    
                     <>
                         <Text style={[styles.searchTitle, {width:'90%', alignSelf:'center'}]}>Resultado da pesquisa: </Text>
-                        <CardBarberShop barbershop={barbershopFinded}/>
+                        <CardBarberShop barbershop={barbershopFinded} onPress={goToBarbershop}/>
 
                     </>
                 )} 
@@ -191,7 +194,7 @@ export default function Home({navigation}){
                     <View>
                         <Text style={[styles.titleCard,{fontSize:20}]}>Tem uma barbearia?</Text>
                         <Text style={{fontSize:16,color:"#797377"}}>Cadastre seu </Text>
-                        <Text style={{fontSize:16,color:"#797377"}}>estabelecimento e apreça </Text>
+                        <Text style={{fontSize:16,color:"#797377"}}>estabelecimento e apareça </Text>
                         <Text style={{fontSize:16,color:"#797377"}}>para clientes próximos </Text>
                     </View>
                     <TouchableOpacity 

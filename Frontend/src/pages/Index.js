@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { GetToken } from "../service/SecureStore";
 import { isLogged } from "../service/UserService";
 
-export default function index({navigation}){
+export default function Index({navigation}){
 
     useEffect(()=>{
        userIsLogged(); 

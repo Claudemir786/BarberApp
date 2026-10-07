@@ -14,7 +14,7 @@ export default function TabsOwner({ navigation }) {
       initialRouteName="Inicio"
       screenOptions={{
         headerShown: false,
-        tabBarStyle: { backgroundColor: "#27272A", height: 90, padding: 5 },
+        tabBarStyle: { backgroundColor: "#27272A", height:100, padding: 5 },
         tabBarActiveTintColor: "#D4AF37",
         tabBarInactiveTintColor: "#797377",
       }}

@@ -1,7 +1,7 @@
 
 import Appointments from "../pages/Appointments";
 import options from "./ConfigRequest";
-import { GetToken, GetUserBarbershop, SetReloadPageForAppointments, SetUserBarbershop } from "./SecureStore";
+import { GetToken, GetUserBarbershop, SetUserBarbershop } from "./SecureStore";
 
 const URL = "http://192.168.3.43:3000/api/";
 
@@ -68,7 +68,7 @@ export async function infoBarbershop(barbershopId){
         if(!info.ok)throw new Error("dados não retornaram corretamente da API");
 
         const barbershop = await info.json();
-
+        console.log("dados retornados: ", barbershop.barbershop)
         return barbershop.barbershop;
         
     } catch (error) {
@@ -148,7 +148,7 @@ export async function registerBussinessHour(barberShopId,weekdayOpen,weekdayClos
         ))
 
         if(!result.ok)throw new Error("Api retornou false, não foi possível registrar horario de functionamento")
-        await SetReloadPageForAppointments(true)
+     
         return true;
 
     } catch (error) {

@@ -8,7 +8,7 @@ import { loginUser } from '../service/UserService'
 
 
 
-export default function login({navigation}){
+export default function Login({navigation}){
 
     const [password,setPassword] = useState("")
     const [email,setEmail] = useState("");

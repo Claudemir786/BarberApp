@@ -171,13 +171,24 @@ export class BarberShop{
       }
     }
 
-    //recebe o id do usuário proprietario
+    //busca as informações da barbearia 
     async getBarbershop(req,res){
       try {
         
         const id = req.user.id;
+        let barbershopId ="";
+        barbershopId = req.query.barbershopId;
+       
 
-        const result = await getInfoBarbershop(id);
+        let result;
+
+        if(barbershopId){
+      
+          result =  await getInfoBarbershop(id,barbershopId)          
+
+        }else{
+          result = await getInfoBarbershop(id);
+        }
 
         if(!result)throw new Error("Repositories retornou falso ao buscar informações da barbearia");
 

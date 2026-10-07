@@ -8,7 +8,7 @@ import {Picker} from '@react-native-picker/picker'
 import Feather from '@expo/vector-icons/Feather';
 import Load from "../../components/Load";
 import { changeDataBarbershop, infoUserBarbershop } from "../../service/BarbeshopService";
-import { GetInfoUser, GetUserBarbershop } from "../../service/SecureStore";
+import { ClearUserData, GetInfoUser, GetUserBarbershop } from "../../service/SecureStore";
 
 
 export default function Settings({navigation}) {
@@ -113,6 +113,19 @@ export default function Settings({navigation}) {
         }
     }
 
+    async function logout(){
+        try {
+
+            await ClearUserData();
+            navigation.reset({
+                index: 0,
+                routes:[{name: "Index"}]
+            })
+            
+        } catch (error) {
+            console.error("Falha ao fazer o logout");
+        }
+    }
     return (
     <View style={styles.container}>
         <HeaderLogo/>
@@ -210,7 +223,9 @@ export default function Settings({navigation}) {
             {!load&&(
                 <ButtonDefault title="Salvar alterações" onpress={handleChangeDataBarbershop}/>
             )}
-            
+            <View style={{marginTop:'10%'}}>
+                <ButtonDefault title="Sair" color="#000" textColor="#D4AF37" onpress={logout}/>
+            </View>
             <View style={{marginBottom:'15%'}}></View>
 
         </ScrollView>

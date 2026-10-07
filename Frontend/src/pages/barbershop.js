@@ -34,6 +34,7 @@ export default function Barbershop({navigation}){
     const [chosenService,setChosenService] = useState("");
     const [chosenBarber,setChosenBarber] = useState("");
     const [chosenPrice,setChosenPrice] = useState("");
+    const [findDataBarbershop,setFindDataBarbershop] = useState(false);
 
 
     const route = useRoute();
@@ -56,7 +57,7 @@ export default function Barbershop({navigation}){
             const info = await infoBarbershop(id)
 
             if(info){
-               
+                setFindDataBarbershop(true);
                 setBarbershop(info[0])
             }else{
                 console.warn("Dados não retornaram")
@@ -294,28 +295,32 @@ export default function Barbershop({navigation}){
                     
                     <View style={{flexDirection:'column', margin:'5%', marginLeft:0}}>
                     
-                    
-                        <Text style={styles.titleBarbershop}>
-                            {barbershop.name}
-                        </Text>
-                        
-                        <View style={{flexDirection:'row'}}>
-                            <View style={{marginTop:'1.5%'}}>
-                                <Feather name="map-pin" size={16} color="#797377" />
-                            </View>                        
-                            <Text style={{color:'#797377',fontSize:16, marginLeft:'2%'}}>
-                            {barbershop.address}
-                            </Text>
-                        </View>
+                        {findDataBarbershop &&(
+                            <>
+                                 <Text style={styles.titleBarbershop}>
+                                    {barbershop.name}
+                                </Text>
+                                
+                                <View style={{flexDirection:'row'}}>
+                                    <View style={{marginTop:'1.5%'}}>
+                                        <Feather name="map-pin" size={16} color="#797377" />
+                                    </View>                        
+                                    <Text style={{color:'#797377',fontSize:16, marginLeft:'2%'}}>
+                                    {barbershop.address}
+                                    </Text>
+                                </View>
 
-                        <View style={{flexDirection:'row'}}>
-                            <View style={{marginTop:'1.5%'}}>
-                                <Feather name="phone" size={16} color="#797377" />
-                            </View>                        
-                            <Text style={{color:'#797377',fontSize:16, marginLeft:'2%'}}>
-                            {barbershop.contact_phone}
-                            </Text>
-                        </View>
+                                <View style={{flexDirection:'row'}}>
+                                    <View style={{marginTop:'1.5%'}}>
+                                        <Feather name="phone" size={16} color="#797377" />
+                                    </View>                        
+                                    <Text style={{color:'#797377',fontSize:16, marginLeft:'2%'}}>
+                                    {barbershop.contact_phone}
+                                    </Text>
+                                </View>
+                            </>
+                        )}
+                       
                         
                     
                     

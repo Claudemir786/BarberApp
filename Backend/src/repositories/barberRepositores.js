@@ -162,7 +162,7 @@ export async function getInfoBarbershop(id,barbershopId){
         const [result] = await POOL.query(`SELECT * FROM barbershops WHERE id = ?`, [barbershopId]);
 
         if(result.length === 0)throw new Error("dados não foram encontrados no banco");
-
+        console.log("resultado: ", result);
         return result;
        
 

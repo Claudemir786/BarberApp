@@ -1,7 +1,7 @@
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import index from "../pages/Index.js";
-import login from "../pages/Login.js";
+import Index from "../pages/Index.js";
+import Login from "../pages/Login.js";
 import Register from "../pages/Register";
 import  Tabs  from "./tabs.js";
 import Barbershop from "../pages/barbershop.js";
@@ -20,8 +20,8 @@ export default function Stack(){
        screenOptions={({headerShown:false})}
        >
 
-            <STACK.Screen name="Index" component={index} />
-            <STACK.Screen name="Login" component={login}/>
+            <STACK.Screen name="Index" component={Index} />
+            <STACK.Screen name="Login" component={Login}/>
             <STACK.Screen name="Register" component={Register}/>
             <STACK.Screen name="Tab" component={Tabs}/>
             <STACK.Screen name="Barbershop" component={Barbershop}/>

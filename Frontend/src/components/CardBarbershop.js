@@ -2,8 +2,11 @@ import {Text,View,TouchableOpacity,StyleSheet,FlatList} from 'react-native'
 
 
 export default function CardBarberShop({barbershop, onPress}){
+    console.log("dados: ", barbershop);
     return(
+        
         <>
+            
             {/*cards de barbearias */}
             <View style={styles.cardBarbershop}>
                 <TouchableOpacity style={{width:'90%', alignSelf:'center',marginTop:'5%',marginBottom:'5%'}}

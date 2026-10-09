@@ -1,6 +1,7 @@
 import pool from "../db/db.js"
 import { comparePassword, hashPassword } from "../util/bcrypt.js";
 import { createToken } from "../util/token.js";
+import { getDataSendMail } from "./alertRegisterAppointment.js";
 
 const POOL =pool;
 
@@ -64,7 +65,7 @@ export async function postScheduling(barbershop_id,service_id,barber_id,customer
                                             VALUES(?,?,?,?,?,?,?)`,[barbershop_id,service_id,barber_id,customer_id,appointment_date,appointment_time,"pending"]);
 
         if(result.affectedRows === 0)throw new Error("dados não foram adicionados com sucesso");
-
+        await getDataSendMail(result.insertId);
         return true;
 
     } catch (error) {

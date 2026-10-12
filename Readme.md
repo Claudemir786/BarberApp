@@ -14,14 +14,14 @@ O BarberApp conta com interfaces específicas para clientes e proprietários de 
 
 <!-- Substitua os caminhos abaixo pelos nomes reais das suas imagens. -->
 
-<img src="Docs/Screenshots/home.jpeg" width="200" alt="Tela inicial">
-<img src="Docs/Screenshots/appointments.jpeg" width="200" alt="Tela de agendamentos">
+<img src="Docs/Screenshots/home.jpeg" width="180" alt="Tela inicial">
+<img src="Docs/Screenshots/appointments.jpeg" width="180" alt="Tela de agendamentos">
 
 ### Painel do proprietário (Owner)
 
-<img src="Docs/Screenshots/dashboardOwner.jpeg" width="200" alt="Painel do proprietário">
-<img src="Docs/Screenshots/appointmentsOwner.jpeg" width="200" alt="agendamentos">
-<img src="Docs/Screenshots/barberOwner.jpeg" width="200" alt="Painel com os barbeiros registrados">
+<img src="Docs/Screenshots/dashboardOwner.jpeg" width="180" alt="Painel do proprietário">
+<img src="Docs/Screenshots/appointmentsOwner.jpeg" width="180" alt="agendamentos">
+<img src="Docs/Screenshots/barberOwner.jpeg" width="180" alt="Painel com os barbeiros registrados">
 
 ### Vídeo de demonstração
 

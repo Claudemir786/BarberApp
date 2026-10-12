@@ -7,24 +7,26 @@ O projeto foi desenvolvido com **React Native, Expo, Node.js, Express e MySQL**,
 ## 📱 Demonstração do projeto
 
 O BarberApp conta com interfaces específicas para clientes e proprietários de barbearias.
+### Página inicial
+<img src="Docs/Screenshots/index.jpeg" width="300" alt="Painel do cliente">
 
 ### Painel do cliente
 
 <!-- Substitua os caminhos abaixo pelos nomes reais das suas imagens. -->
 
-![Painel do cliente](Docs/Screenshots/home.jpeg)
+<img src="Docs/Screenshots/home.jpeg" width="200" alt="Tela inicial">
+<img src="Docs/Screenshots/appointments.jpeg" width="200" alt="Tela de agendamentos">
 
 ### Painel do proprietário (Owner)
 
-![Painel do proprietário](Docs/Screenshots/dashboardOwner.jpeg)
+<img src="Docs/Screenshots/dashboardOwner.jpeg" width="200" alt="Painel do proprietário">
+<img src="Docs/Screenshots/appointmentsOwner.jpeg" width="200" alt="agendamentos">
+<img src="Docs/Screenshots/barberOwner.jpeg" width="200" alt="Painel com os barbeiros registrados">
 
 ### Vídeo de demonstração
 
-![Demonstração do BarberApp](Docs/Screenshots/Funcionamento.gif)
+<img src="Docs/Screenshots/Funcionamento.gif" width="300" alt="Funcionamento">
 
-
-
-> Substitua os caminhos acima pelos arquivos reais do projeto. Se ainda não tiver o GIF, você pode manter apenas o link para o vídeo ou remover essa seção temporariamente.
 
 ## ✨ Funcionalidades
 
